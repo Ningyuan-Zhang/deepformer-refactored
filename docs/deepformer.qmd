@@ -1,0 +1,177 @@
+---
+title: "DeepFormer Model Introduction and Reproduction Tutorial"
+author: "Your Name"
+format:
+  html:
+    toc: true
+    number-sections: true
+execute:
+  echo: true
+---
+
+# 1. Model Background
+
+## 1.1 What is DeepFormer?
+
+DeepFormer is a deep learning model for DNA sequence function prediction. According to the original repository, it is a hybrid network that combines convolutional neural networks (CNNs) with a linear attention mechanism to identify the function of DNA sequences. The repository README also reports reproduction results on the DeepSEA task and compares DeepFormer with models such as DeepSEA, DanQ, and DeepATT.
+
+## 1.2 Paper and Repository Information
+
+This project is based on the original implementation provided in the GitHub repository `YZ20211221/DeepFormer`. The repository includes dependency requirements, data preparation instructions, a training entry point, and a prediction entry point. Therefore, it serves not only as code accompanying the paper but also as an important reference for reproduction.
+
+## 1.3 Goal of This Refactored Project
+
+This repository is not intended to simply copy the original DeepFormer code. Instead, the original implementation is reorganized into a cleaner engineering structure with separate folders such as `config/`, `models/`, `training/`, `scripts/`, and `docs/`. The purpose is to make the model structure, training pipeline, evaluation pipeline, and documentation easier to understand, maintain, and reproduce.
+
+# 2. Task Definition
+
+## 2.1 What is the input?
+
+According to the original training and evaluation configurations, the input sequence length of DeepFormer is 1000 bp. During both training and evaluation, the model dynamically extracts input sequences from the reference genome file `data/male.hg19.fasta` together with interval information, rather than reading from a pre-assembled ordinary sample table.
+
+## 2.2 What is the output?
+
+In the original configuration, `n_targets` is set to 919, which means that the model predicts 919 functional labels simultaneously. In the original model file, the classifier also outputs 919 dimensions and uses `Sigmoid` as the final activation layer. Therefore, this is a multi-label prediction task rather than a single-label classification task.
+
+## 2.3 What type of task does this model belong to?
+
+Based on the output format and the loss function, DeepFormer should be regarded as a multi-label binary classification model. In the original model file, the loss function is defined as `BCELoss()`, which is consistent with the setting where each sample is associated with multiple independent labels.
+
+# 3. Data Preparation
+
+## 3.1 Dataset used by the authors
+
+The original repository README states that the training, validation, and testing data come from DeepSEA. The authors instruct users to download the DeepSEA training, validation, and testing bundles, then place the extracted `.mat` files into the `data/` folder. The README also mentions converted `.fasta` files provided by the authors.
+
+## 3.2 Key files required at runtime
+
+From the original training and evaluation configurations, it is clear that the program depends on several key files at runtime: the reference genome file `data/male.hg19.fasta`, the feature list `data/distinct_features.txt`, the target label file `data/sorted_deepsea_data.bed.gz`, and the interval file `data/TF_intervals.txt`. These paths are not merely repository examples for readers; they are actual runtime file paths that the program attempts to load during training and evaluation.
+
+## 3.3 Data split strategy
+
+In the original training configuration, validation uses `chr6` and `chr7`, while testing uses `chr8` and `chr9`. This chromosome-level holdout strategy helps reduce the risk of data leakage caused by highly similar samples appearing in both training and validation/test sets. In the evaluation configuration, only the test-related settings are kept.
+
+# 4. Model Architecture
+
+## 4.1 Overall pipeline
+
+According to the original model file, the overall DeepFormer pipeline can be summarized as follows: input DNA sequence → three blocks of 1D convolutional networks for local feature extraction → one Flow_Attention layer for higher-level interaction modeling → flattening → classifier → prediction probabilities for 919 labels.
+
+## 4.2 CNN module
+
+The original model file contains three convolutional blocks. The first block uses channel sizes `4 → 320 → 320`, the second uses `320 → 480 → 480`, and the third uses `480 → 960 → 960`. The convolution kernel size is 8. The first two blocks are followed by max-pooling, and the latter blocks also include `Dropout(0.2)`. These convolutional layers are mainly responsible for extracting local sequence patterns and higher-level features from DNA sequences.
+
+## 4.3 Flow_Attention module
+
+After the convolutional backbone, the original model applies one `Flow_Attention(44, 44, 44, 4)` layer. From the implementation, this module first performs linear projections to obtain query, key, and value representations, and then applies a custom flow-attention computation to produce a new representation. This module is an important component that distinguishes DeepFormer from a pure CNN-based architecture.
+
+## 4.4 Output layer
+
+The classifier in the original model consists of `Linear(44 * 960, 919)`, `ReLU`, `Linear(919, 919)`, and `Sigmoid`. The final output is a 919-dimensional probability vector corresponding to 919 functional labels. The loss function is `BCELoss()`, and the optimizer is `Adam` with `weight_decay=1e-6`.
+
+# 5. Environment Setup
+
+## 5.1 Dependencies from the original repository
+
+According to the original DeepFormer repository, the recommended environment includes Python 3.9, `selene-sdk==0.4.4`, `einops==0.5.0`, `torch==1.7.1`, `torchvision==0.8.2`, and `torchaudio==0.7.2`. These dependencies are important because the project relies on both PyTorch and Selene for model definition, configuration parsing, training, and evaluation.
+
+## 5.2 Local development vs. runtime environment
+
+In this refactored project, code and documentation can be edited locally in VS Code, while actual training and evaluation are expected to be performed in a properly prepared Python environment, usually on a server. This is because the model depends on PyTorch, Selene, and external runtime data files, which may not all be available on a personal laptop environment. The repository therefore separates documentation and code organization from actual runtime execution.
+
+## 5.3 Dependency management in this repository
+
+This refactored repository uses a top-level `requirements.txt` file to record the main Python dependencies. In addition, the script `scripts/setup_env.sh` is provided as an environment setup helper. Its purpose is to create a dedicated conda environment, activate it, and install the required packages. This makes the project structure clearer and closer to a standard engineering workflow.
+
+## 5.4 Current environment status
+
+At the current stage, the project structure and core source files have been prepared, but successful execution still depends on three external conditions: a correct Python environment, installed dependencies, and prepared runtime data files under `data/`. Therefore, the current repository should be regarded as a refactored and documented project scaffold that is ready for later execution and reproduction.
+
+# 6. Training and Evaluation Workflow
+
+## 6.1 Original training workflow
+
+In the original DeepFormer repository, the training entry point is `DeepFormer_train.py`, and the training process is driven by the configuration file `DeepFormer_YAML.yml`. The script loads the configuration and calls Selene's `parse_configs_and_run(configs, lr=0.0005)` function to start the training pipeline. The original README also provides a Slurm-based training command through `DeepFormer_train.slurm`.
+
+## 6.2 Original evaluation workflow
+
+In the original repository, evaluation is separated from training. The evaluation entry point is `predict.py`, and the corresponding configuration file is `evaluate.yml`. This configuration loads a trained model, prepares the test sampler, and runs evaluation on the test set. The original README also mentions that users can directly download the authors' best model and run prediction without retraining from scratch.
+
+## 6.3 Refactored workflow in this project
+
+In this refactored repository, the training and evaluation logic are reorganized into a cleaner structure:
+
+- training configuration: `config/train_deepformer.yaml`
+- evaluation configuration: `config/evaluate_deepformer.yaml`
+- training entry point: `training/train.py`
+- evaluation entry point: `training/evaluate.py`
+
+This design preserves the original DeepFormer logic while adapting it to a more explicit engineering layout.
+
+## 6.4 Script-level workflow
+
+To make the project easier to understand and use, helper scripts are provided in the `scripts/` folder:
+
+- `scripts/setup_env.sh`: prepares the conda environment and installs dependencies
+- `scripts/run_train.sh`: activates the environment and launches `training/train.py`
+- `scripts/run_predict.sh`: activates the environment and launches `training/evaluate.py`
+
+At the repository root level, `run_example_pipeline.sh` is used as a simple pipeline example that links environment setup, training, and evaluation into one sequence.
+
+## 6.5 Current execution status
+
+Although the repository now contains the main configuration files, model definition, training/evaluation entry points, and helper scripts, actual execution still depends on runtime preparation. In particular, the required DeepFormer data files must be available under `data/`, and the Python environment must include all required dependencies. Therefore, the current project is ready in structure, but full runtime reproduction remains the next practical step.
+
+# 7. Results
+
+## 7.1 Results reported in the original repository
+
+The original DeepFormer repository reports performance on the DeepSEA task and compares DeepFormer with several baseline models, including DeepSEA, DanQ, DeepATT, and DanQ-JASPAR. According to the README, DeepFormer achieves the best average AUROC and average AUPR among the listed models. This suggests that the combination of convolutional layers and flow-attention improves sequence function prediction performance on this benchmark.
+
+## 7.2 Reproduction status in this refactored project
+
+At the current stage, this refactored repository has completed the restructuring of the project layout, configuration files, model definition, training entry point, evaluation entry point, helper scripts, and documentation scaffold. However, full runtime reproduction has not yet been completed because actual execution still depends on a prepared Python environment and the required DeepFormer runtime data files.
+
+## 7.3 Expected outputs after execution
+
+Once the training and evaluation pipelines are executed successfully, the expected outputs should include model checkpoints, the best saved model, evaluation statistics, and performance summaries under the `results/` directory. These outputs will later be used to update this section with concrete reproduction results and comparison against the original repository.
+
+## 7.4 Difference between repository status and final reproduction
+
+It is important to distinguish between a structurally complete repository and a fully reproduced experiment. At present, this project should be regarded as structurally ready for reproduction, while the final numerical results still need to be generated in a correctly configured runtime environment with the required data files.
+
+# 8. Strengths, Limitations, and Use Cases
+
+## 8.1 Strengths
+
+One major strength of DeepFormer is that it combines convolutional layers with a custom flow-attention module. The convolutional backbone is suitable for extracting local sequence patterns, while the attention module adds a mechanism for modeling broader interactions in the learned feature space. Another strength is that the original repository provides a relatively explicit configuration-driven workflow, which makes it suitable for structured refactoring and documentation.
+
+## 8.2 Limitations
+
+A limitation of the original project is that it depends on the Selene framework and several external runtime data files, which makes the execution pipeline less transparent for beginners. In addition, the repository structure of the original implementation is not fully aligned with a standard modular engineering layout, so understanding the relationship among the model file, configuration files, and training scripts requires extra effort. Another practical limitation is that actual reproduction depends on preparing the correct environment and external datasets.
+
+## 8.3 Suitable use cases
+
+DeepFormer is suitable for sequence-level functional prediction tasks where the input is DNA sequence and the output consists of multiple functional labels. It is also a useful example for studying how convolutional sequence models can be combined with attention-style modules. In the context of this refactored project, DeepFormer is particularly suitable as a teaching-oriented case for understanding project restructuring, configuration-driven training, and sequence model reproduction.
+
+## 8.4 Role of this refactored repository
+
+The refactored version is especially useful for learning and presentation purposes. By reorganizing the original implementation into a clearer directory structure, this repository makes it easier to explain what each part of the project does, how the components are related, and what still needs to be prepared before runtime execution.
+
+# 9. Conclusion
+
+## 9.1 Summary
+
+This project reorganizes the original DeepFormer implementation into a clearer engineering structure with separate folders for configuration, model definition, training, evaluation, scripts, data instructions, and documentation. The goal is not only to preserve the original logic of DeepFormer, but also to make the repository easier to read, explain, and maintain.
+
+## 9.2 What has been completed
+
+At the current stage, the repository structure, configuration files, model scaffold, training and evaluation entry points, helper scripts, dependency list, and QMD documentation have all been prepared. This means that the project is already in a strong state for explanation, demonstration, and future execution.
+
+## 9.3 What remains to be done
+
+The main remaining tasks are environment setup, preparation of the required runtime data files, execution testing on a proper machine or server, and the collection of actual reproduction results. After these steps are completed, this documentation can be further updated with concrete outputs and result analysis.
+
+## 9.4 Final remark
+
+DeepFormer serves as a useful example of how a sequence-based deep learning model can be studied not only from the perspective of model architecture, but also from the perspective of repository organization, reproducibility, and engineering clarity. This refactored project is therefore both a reproduction scaffold and a structured learning resource.
