@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Your Name">
+
+<title>DeepFormer Model Introduction and Reproduction Tutorial</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="deepformer_files/libs/clipboard/clipboard.min.js"></script>
+<script src="deepformer_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="deepformer_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="deepformer_files/libs/quarto-html/popper.min.js"></script>
+<script src="deepformer_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="deepformer_files/libs/quarto-html/anchor.min.js"></script>
+<link href="deepformer_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="deepformer_files/libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="deepformer_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="deepformer_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="deepformer_files/libs/bootstrap/bootstrap-efbb37e9afcc02144ebbc7afd12a776f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#model-background" id="toc-model-background" class="nav-link active" data-scroll-target="#model-background"><span class="header-section-number">1</span> 1. Model Background</a>
+  <ul class="collapse">
+  <li><a href="#what-is-deepformer" id="toc-what-is-deepformer" class="nav-link" data-scroll-target="#what-is-deepformer"><span class="header-section-number">1.1</span> 1.1 What is DeepFormer?</a></li>
+  <li><a href="#paper-and-repository-information" id="toc-paper-and-repository-information" class="nav-link" data-scroll-target="#paper-and-repository-information"><span class="header-section-number">1.2</span> 1.2 Paper and Repository Information</a></li>
+  <li><a href="#goal-of-this-refactored-project" id="toc-goal-of-this-refactored-project" class="nav-link" data-scroll-target="#goal-of-this-refactored-project"><span class="header-section-number">1.3</span> 1.3 Goal of This Refactored Project</a></li>
+  </ul></li>
+  <li><a href="#task-definition" id="toc-task-definition" class="nav-link" data-scroll-target="#task-definition"><span class="header-section-number">2</span> 2. Task Definition</a>
+  <ul class="collapse">
+  <li><a href="#what-is-the-input" id="toc-what-is-the-input" class="nav-link" data-scroll-target="#what-is-the-input"><span class="header-section-number">2.1</span> 2.1 What is the input?</a></li>
+  <li><a href="#what-is-the-output" id="toc-what-is-the-output" class="nav-link" data-scroll-target="#what-is-the-output"><span class="header-section-number">2.2</span> 2.2 What is the output?</a></li>
+  <li><a href="#what-type-of-task-does-this-model-belong-to" id="toc-what-type-of-task-does-this-model-belong-to" class="nav-link" data-scroll-target="#what-type-of-task-does-this-model-belong-to"><span class="header-section-number">2.3</span> 2.3 What type of task does this model belong to?</a></li>
+  </ul></li>
+  <li><a href="#data-preparation" id="toc-data-preparation" class="nav-link" data-scroll-target="#data-preparation"><span class="header-section-number">3</span> 3. Data Preparation</a>
+  <ul class="collapse">
+  <li><a href="#dataset-used-by-the-authors" id="toc-dataset-used-by-the-authors" class="nav-link" data-scroll-target="#dataset-used-by-the-authors"><span class="header-section-number">3.1</span> 3.1 Dataset used by the authors</a></li>
+  <li><a href="#key-files-required-at-runtime" id="toc-key-files-required-at-runtime" class="nav-link" data-scroll-target="#key-files-required-at-runtime"><span class="header-section-number">3.2</span> 3.2 Key files required at runtime</a></li>
+  <li><a href="#data-split-strategy" id="toc-data-split-strategy" class="nav-link" data-scroll-target="#data-split-strategy"><span class="header-section-number">3.3</span> 3.3 Data split strategy</a></li>
+  </ul></li>
+  <li><a href="#model-architecture" id="toc-model-architecture" class="nav-link" data-scroll-target="#model-architecture"><span class="header-section-number">4</span> 4. Model Architecture</a>
+  <ul class="collapse">
+  <li><a href="#overall-pipeline" id="toc-overall-pipeline" class="nav-link" data-scroll-target="#overall-pipeline"><span class="header-section-number">4.1</span> 4.1 Overall pipeline</a></li>
+  <li><a href="#cnn-module" id="toc-cnn-module" class="nav-link" data-scroll-target="#cnn-module"><span class="header-section-number">4.2</span> 4.2 CNN module</a></li>
+  <li><a href="#flow_attention-module" id="toc-flow_attention-module" class="nav-link" data-scroll-target="#flow_attention-module"><span class="header-section-number">4.3</span> 4.3 Flow_Attention module</a></li>
+  <li><a href="#output-layer" id="toc-output-layer" class="nav-link" data-scroll-target="#output-layer"><span class="header-section-number">4.4</span> 4.4 Output layer</a></li>
+  </ul></li>
+  <li><a href="#environment-setup" id="toc-environment-setup" class="nav-link" data-scroll-target="#environment-setup"><span class="header-section-number">5</span> 5. Environment Setup</a>
+  <ul class="collapse">
+  <li><a href="#dependencies-from-the-original-repository" id="toc-dependencies-from-the-original-repository" class="nav-link" data-scroll-target="#dependencies-from-the-original-repository"><span class="header-section-number">5.1</span> 5.1 Dependencies from the original repository</a></li>
+  <li><a href="#local-development-vs.-runtime-environment" id="toc-local-development-vs.-runtime-environment" class="nav-link" data-scroll-target="#local-development-vs.-runtime-environment"><span class="header-section-number">5.2</span> 5.2 Local development vs.&nbsp;runtime environment</a></li>
+  <li><a href="#dependency-management-in-this-repository" id="toc-dependency-management-in-this-repository" class="nav-link" data-scroll-target="#dependency-management-in-this-repository"><span class="header-section-number">5.3</span> 5.3 Dependency management in this repository</a></li>
+  <li><a href="#current-environment-status" id="toc-current-environment-status" class="nav-link" data-scroll-target="#current-environment-status"><span class="header-section-number">5.4</span> 5.4 Current environment status</a></li>
+  </ul></li>
+  <li><a href="#training-and-evaluation-workflow" id="toc-training-and-evaluation-workflow" class="nav-link" data-scroll-target="#training-and-evaluation-workflow"><span class="header-section-number">6</span> 6. Training and Evaluation Workflow</a>
+  <ul class="collapse">
+  <li><a href="#original-training-workflow" id="toc-original-training-workflow" class="nav-link" data-scroll-target="#original-training-workflow"><span class="header-section-number">6.1</span> 6.1 Original training workflow</a></li>
+  <li><a href="#original-evaluation-workflow" id="toc-original-evaluation-workflow" class="nav-link" data-scroll-target="#original-evaluation-workflow"><span class="header-section-number">6.2</span> 6.2 Original evaluation workflow</a></li>
+  <li><a href="#refactored-workflow-in-this-project" id="toc-refactored-workflow-in-this-project" class="nav-link" data-scroll-target="#refactored-workflow-in-this-project"><span class="header-section-number">6.3</span> 6.3 Refactored workflow in this project</a></li>
+  <li><a href="#script-level-workflow" id="toc-script-level-workflow" class="nav-link" data-scroll-target="#script-level-workflow"><span class="header-section-number">6.4</span> 6.4 Script-level workflow</a></li>
+  <li><a href="#current-execution-status" id="toc-current-execution-status" class="nav-link" data-scroll-target="#current-execution-status"><span class="header-section-number">6.5</span> 6.5 Current execution status</a></li>
+  </ul></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results"><span class="header-section-number">7</span> 7. Results</a>
+  <ul class="collapse">
+  <li><a href="#results-reported-in-the-original-repository" id="toc-results-reported-in-the-original-repository" class="nav-link" data-scroll-target="#results-reported-in-the-original-repository"><span class="header-section-number">7.1</span> 7.1 Results reported in the original repository</a></li>
+  <li><a href="#reproduction-status-in-this-refactored-project" id="toc-reproduction-status-in-this-refactored-project" class="nav-link" data-scroll-target="#reproduction-status-in-this-refactored-project"><span class="header-section-number">7.2</span> 7.2 Reproduction status in this refactored project</a></li>
+  <li><a href="#expected-outputs-after-execution" id="toc-expected-outputs-after-execution" class="nav-link" data-scroll-target="#expected-outputs-after-execution"><span class="header-section-number">7.3</span> 7.3 Expected outputs after execution</a></li>
+  <li><a href="#difference-between-repository-status-and-final-reproduction" id="toc-difference-between-repository-status-and-final-reproduction" class="nav-link" data-scroll-target="#difference-between-repository-status-and-final-reproduction"><span class="header-section-number">7.4</span> 7.4 Difference between repository status and final reproduction</a></li>
+  </ul></li>
+  <li><a href="#strengths-limitations-and-use-cases" id="toc-strengths-limitations-and-use-cases" class="nav-link" data-scroll-target="#strengths-limitations-and-use-cases"><span class="header-section-number">8</span> 8. Strengths, Limitations, and Use Cases</a>
+  <ul class="collapse">
+  <li><a href="#strengths" id="toc-strengths" class="nav-link" data-scroll-target="#strengths"><span class="header-section-number">8.1</span> 8.1 Strengths</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations"><span class="header-section-number">8.2</span> 8.2 Limitations</a></li>
+  <li><a href="#suitable-use-cases" id="toc-suitable-use-cases" class="nav-link" data-scroll-target="#suitable-use-cases"><span class="header-section-number">8.3</span> 8.3 Suitable use cases</a></li>
+  <li><a href="#role-of-this-refactored-repository" id="toc-role-of-this-refactored-repository" class="nav-link" data-scroll-target="#role-of-this-refactored-repository"><span class="header-section-number">8.4</span> 8.4 Role of this refactored repository</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">9</span> 9. Conclusion</a>
+  <ul class="collapse">
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">9.1</span> 9.1 Summary</a></li>
+  <li><a href="#what-has-been-completed" id="toc-what-has-been-completed" class="nav-link" data-scroll-target="#what-has-been-completed"><span class="header-section-number">9.2</span> 9.2 What has been completed</a></li>
+  <li><a href="#what-remains-to-be-done" id="toc-what-remains-to-be-done" class="nav-link" data-scroll-target="#what-remains-to-be-done"><span class="header-section-number">9.3</span> 9.3 What remains to be done</a></li>
+  <li><a href="#final-remark" id="toc-final-remark" class="nav-link" data-scroll-target="#final-remark"><span class="header-section-number">9.4</span> 9.4 Final remark</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">DeepFormer Model Introduction and Reproduction Tutorial</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Your Name </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="model-background" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> 1. Model Background</h1>
+<section id="what-is-deepformer" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="what-is-deepformer"><span class="header-section-number">1.1</span> 1.1 What is DeepFormer?</h2>
+<p>DeepFormer is a deep learning model for DNA sequence function prediction. According to the original repository, it is a hybrid network that combines convolutional neural networks (CNNs) with a linear attention mechanism to identify the function of DNA sequences. The repository README also reports reproduction results on the DeepSEA task and compares DeepFormer with models such as DeepSEA, DanQ, and DeepATT.</p>
+</section>
+<section id="paper-and-repository-information" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="paper-and-repository-information"><span class="header-section-number">1.2</span> 1.2 Paper and Repository Information</h2>
+<p>This project is based on the original implementation provided in the GitHub repository <code>YZ20211221/DeepFormer</code>. The repository includes dependency requirements, data preparation instructions, a training entry point, and a prediction entry point. Therefore, it serves not only as code accompanying the paper but also as an important reference for reproduction.</p>
+</section>
+<section id="goal-of-this-refactored-project" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="goal-of-this-refactored-project"><span class="header-section-number">1.3</span> 1.3 Goal of This Refactored Project</h2>
+<p>This repository is not intended to simply copy the original DeepFormer code. Instead, the original implementation is reorganized into a cleaner engineering structure with separate folders such as <code>config/</code>, <code>models/</code>, <code>training/</code>, <code>scripts/</code>, and <code>docs/</code>. The purpose is to make the model structure, training pipeline, evaluation pipeline, and documentation easier to understand, maintain, and reproduce.</p>
+</section>
+</section>
+<section id="task-definition" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> 2. Task Definition</h1>
+<section id="what-is-the-input" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="what-is-the-input"><span class="header-section-number">2.1</span> 2.1 What is the input?</h2>
+<p>According to the original training and evaluation configurations, the input sequence length of DeepFormer is 1000 bp. During both training and evaluation, the model dynamically extracts input sequences from the reference genome file <code>data/male.hg19.fasta</code> together with interval information, rather than reading from a pre-assembled ordinary sample table.</p>
+</section>
+<section id="what-is-the-output" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="what-is-the-output"><span class="header-section-number">2.2</span> 2.2 What is the output?</h2>
+<p>In the original configuration, <code>n_targets</code> is set to 919, which means that the model predicts 919 functional labels simultaneously. In the original model file, the classifier also outputs 919 dimensions and uses <code>Sigmoid</code> as the final activation layer. Therefore, this is a multi-label prediction task rather than a single-label classification task.</p>
+</section>
+<section id="what-type-of-task-does-this-model-belong-to" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="what-type-of-task-does-this-model-belong-to"><span class="header-section-number">2.3</span> 2.3 What type of task does this model belong to?</h2>
+<p>Based on the output format and the loss function, DeepFormer should be regarded as a multi-label binary classification model. In the original model file, the loss function is defined as <code>BCELoss()</code>, which is consistent with the setting where each sample is associated with multiple independent labels.</p>
+</section>
+</section>
+<section id="data-preparation" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> 3. Data Preparation</h1>
+<section id="dataset-used-by-the-authors" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="dataset-used-by-the-authors"><span class="header-section-number">3.1</span> 3.1 Dataset used by the authors</h2>
+<p>The original repository README states that the training, validation, and testing data come from DeepSEA. The authors instruct users to download the DeepSEA training, validation, and testing bundles, then place the extracted <code>.mat</code> files into the <code>data/</code> folder. The README also mentions converted <code>.fasta</code> files provided by the authors.</p>
+</section>
+<section id="key-files-required-at-runtime" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="key-files-required-at-runtime"><span class="header-section-number">3.2</span> 3.2 Key files required at runtime</h2>
+<p>From the original training and evaluation configurations, it is clear that the program depends on several key files at runtime: the reference genome file <code>data/male.hg19.fasta</code>, the feature list <code>data/distinct_features.txt</code>, the target label file <code>data/sorted_deepsea_data.bed.gz</code>, and the interval file <code>data/TF_intervals.txt</code>. These paths are not merely repository examples for readers; they are actual runtime file paths that the program attempts to load during training and evaluation.</p>
+</section>
+<section id="data-split-strategy" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="data-split-strategy"><span class="header-section-number">3.3</span> 3.3 Data split strategy</h2>
+<p>In the original training configuration, validation uses <code>chr6</code> and <code>chr7</code>, while testing uses <code>chr8</code> and <code>chr9</code>. This chromosome-level holdout strategy helps reduce the risk of data leakage caused by highly similar samples appearing in both training and validation/test sets. In the evaluation configuration, only the test-related settings are kept.</p>
+</section>
+</section>
+<section id="model-architecture" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> 4. Model Architecture</h1>
+<section id="overall-pipeline" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="overall-pipeline"><span class="header-section-number">4.1</span> 4.1 Overall pipeline</h2>
+<p>According to the original model file, the overall DeepFormer pipeline can be summarized as follows: input DNA sequence → three blocks of 1D convolutional networks for local feature extraction → one Flow_Attention layer for higher-level interaction modeling → flattening → classifier → prediction probabilities for 919 labels.</p>
+</section>
+<section id="cnn-module" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="cnn-module"><span class="header-section-number">4.2</span> 4.2 CNN module</h2>
+<p>The original model file contains three convolutional blocks. The first block uses channel sizes <code>4 → 320 → 320</code>, the second uses <code>320 → 480 → 480</code>, and the third uses <code>480 → 960 → 960</code>. The convolution kernel size is 8. The first two blocks are followed by max-pooling, and the latter blocks also include <code>Dropout(0.2)</code>. These convolutional layers are mainly responsible for extracting local sequence patterns and higher-level features from DNA sequences.</p>
+</section>
+<section id="flow_attention-module" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="flow_attention-module"><span class="header-section-number">4.3</span> 4.3 Flow_Attention module</h2>
+<p>After the convolutional backbone, the original model applies one <code>Flow_Attention(44, 44, 44, 4)</code> layer. From the implementation, this module first performs linear projections to obtain query, key, and value representations, and then applies a custom flow-attention computation to produce a new representation. This module is an important component that distinguishes DeepFormer from a pure CNN-based architecture.</p>
+</section>
+<section id="output-layer" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="output-layer"><span class="header-section-number">4.4</span> 4.4 Output layer</h2>
+<p>The classifier in the original model consists of <code>Linear(44 * 960, 919)</code>, <code>ReLU</code>, <code>Linear(919, 919)</code>, and <code>Sigmoid</code>. The final output is a 919-dimensional probability vector corresponding to 919 functional labels. The loss function is <code>BCELoss()</code>, and the optimizer is <code>Adam</code> with <code>weight_decay=1e-6</code>.</p>
+</section>
+</section>
+<section id="environment-setup" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> 5. Environment Setup</h1>
+<section id="dependencies-from-the-original-repository" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="dependencies-from-the-original-repository"><span class="header-section-number">5.1</span> 5.1 Dependencies from the original repository</h2>
+<p>According to the original DeepFormer repository, the recommended environment includes Python 3.9, <code>selene-sdk==0.4.4</code>, <code>einops==0.5.0</code>, <code>torch==1.7.1</code>, <code>torchvision==0.8.2</code>, and <code>torchaudio==0.7.2</code>. These dependencies are important because the project relies on both PyTorch and Selene for model definition, configuration parsing, training, and evaluation.</p>
+</section>
+<section id="local-development-vs.-runtime-environment" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="local-development-vs.-runtime-environment"><span class="header-section-number">5.2</span> 5.2 Local development vs.&nbsp;runtime environment</h2>
+<p>In this refactored project, code and documentation can be edited locally in VS Code, while actual training and evaluation are expected to be performed in a properly prepared Python environment, usually on a server. This is because the model depends on PyTorch, Selene, and external runtime data files, which may not all be available on a personal laptop environment. The repository therefore separates documentation and code organization from actual runtime execution.</p>
+</section>
+<section id="dependency-management-in-this-repository" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="dependency-management-in-this-repository"><span class="header-section-number">5.3</span> 5.3 Dependency management in this repository</h2>
+<p>This refactored repository uses a top-level <code>requirements.txt</code> file to record the main Python dependencies. In addition, the script <code>scripts/setup_env.sh</code> is provided as an environment setup helper. Its purpose is to create a dedicated conda environment, activate it, and install the required packages. This makes the project structure clearer and closer to a standard engineering workflow.</p>
+</section>
+<section id="current-environment-status" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="current-environment-status"><span class="header-section-number">5.4</span> 5.4 Current environment status</h2>
+<p>At the current stage, the project structure and core source files have been prepared, but successful execution still depends on three external conditions: a correct Python environment, installed dependencies, and prepared runtime data files under <code>data/</code>. Therefore, the current repository should be regarded as a refactored and documented project scaffold that is ready for later execution and reproduction.</p>
+</section>
+</section>
+<section id="training-and-evaluation-workflow" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> 6. Training and Evaluation Workflow</h1>
+<section id="original-training-workflow" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="original-training-workflow"><span class="header-section-number">6.1</span> 6.1 Original training workflow</h2>
+<p>In the original DeepFormer repository, the training entry point is <code>DeepFormer_train.py</code>, and the training process is driven by the configuration file <code>DeepFormer_YAML.yml</code>. The script loads the configuration and calls Selene’s <code>parse_configs_and_run(configs, lr=0.0005)</code> function to start the training pipeline. The original README also provides a Slurm-based training command through <code>DeepFormer_train.slurm</code>.</p>
+</section>
+<section id="original-evaluation-workflow" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="original-evaluation-workflow"><span class="header-section-number">6.2</span> 6.2 Original evaluation workflow</h2>
+<p>In the original repository, evaluation is separated from training. The evaluation entry point is <code>predict.py</code>, and the corresponding configuration file is <code>evaluate.yml</code>. This configuration loads a trained model, prepares the test sampler, and runs evaluation on the test set. The original README also mentions that users can directly download the authors’ best model and run prediction without retraining from scratch.</p>
+</section>
+<section id="refactored-workflow-in-this-project" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="refactored-workflow-in-this-project"><span class="header-section-number">6.3</span> 6.3 Refactored workflow in this project</h2>
+<p>In this refactored repository, the training and evaluation logic are reorganized into a cleaner structure:</p>
+<ul>
+<li>training configuration: <code>config/train_deepformer.yaml</code></li>
+<li>evaluation configuration: <code>config/evaluate_deepformer.yaml</code></li>
+<li>training entry point: <code>training/train.py</code></li>
+<li>evaluation entry point: <code>training/evaluate.py</code></li>
+</ul>
+<p>This design preserves the original DeepFormer logic while adapting it to a more explicit engineering layout.</p>
+</section>
+<section id="script-level-workflow" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="script-level-workflow"><span class="header-section-number">6.4</span> 6.4 Script-level workflow</h2>
+<p>To make the project easier to understand and use, helper scripts are provided in the <code>scripts/</code> folder:</p>
+<ul>
+<li><code>scripts/setup_env.sh</code>: prepares the conda environment and installs dependencies</li>
+<li><code>scripts/run_train.sh</code>: activates the environment and launches <code>training/train.py</code></li>
+<li><code>scripts/run_predict.sh</code>: activates the environment and launches <code>training/evaluate.py</code></li>
+</ul>
+<p>At the repository root level, <code>run_example_pipeline.sh</code> is used as a simple pipeline example that links environment setup, training, and evaluation into one sequence.</p>
+</section>
+<section id="current-execution-status" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="current-execution-status"><span class="header-section-number">6.5</span> 6.5 Current execution status</h2>
+<p>Although the repository now contains the main configuration files, model definition, training/evaluation entry points, and helper scripts, actual execution still depends on runtime preparation. In particular, the required DeepFormer data files must be available under <code>data/</code>, and the Python environment must include all required dependencies. Therefore, the current project is ready in structure, but full runtime reproduction remains the next practical step.</p>
+</section>
+</section>
+<section id="results" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> 7. Results</h1>
+<section id="results-reported-in-the-original-repository" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="results-reported-in-the-original-repository"><span class="header-section-number">7.1</span> 7.1 Results reported in the original repository</h2>
+<p>The original DeepFormer repository reports performance on the DeepSEA task and compares DeepFormer with several baseline models, including DeepSEA, DanQ, DeepATT, and DanQ-JASPAR. According to the README, DeepFormer achieves the best average AUROC and average AUPR among the listed models. This suggests that the combination of convolutional layers and flow-attention improves sequence function prediction performance on this benchmark.</p>
+</section>
+<section id="reproduction-status-in-this-refactored-project" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="reproduction-status-in-this-refactored-project"><span class="header-section-number">7.2</span> 7.2 Reproduction status in this refactored project</h2>
+<p>At the current stage, this refactored repository has completed the restructuring of the project layout, configuration files, model definition, training entry point, evaluation entry point, helper scripts, and documentation scaffold. However, full runtime reproduction has not yet been completed because actual execution still depends on a prepared Python environment and the required DeepFormer runtime data files.</p>
+</section>
+<section id="expected-outputs-after-execution" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="expected-outputs-after-execution"><span class="header-section-number">7.3</span> 7.3 Expected outputs after execution</h2>
+<p>Once the training and evaluation pipelines are executed successfully, the expected outputs should include model checkpoints, the best saved model, evaluation statistics, and performance summaries under the <code>results/</code> directory. These outputs will later be used to update this section with concrete reproduction results and comparison against the original repository.</p>
+</section>
+<section id="difference-between-repository-status-and-final-reproduction" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="difference-between-repository-status-and-final-reproduction"><span class="header-section-number">7.4</span> 7.4 Difference between repository status and final reproduction</h2>
+<p>It is important to distinguish between a structurally complete repository and a fully reproduced experiment. At present, this project should be regarded as structurally ready for reproduction, while the final numerical results still need to be generated in a correctly configured runtime environment with the required data files.</p>
+</section>
+</section>
+<section id="strengths-limitations-and-use-cases" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> 8. Strengths, Limitations, and Use Cases</h1>
+<section id="strengths" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="strengths"><span class="header-section-number">8.1</span> 8.1 Strengths</h2>
+<p>One major strength of DeepFormer is that it combines convolutional layers with a custom flow-attention module. The convolutional backbone is suitable for extracting local sequence patterns, while the attention module adds a mechanism for modeling broader interactions in the learned feature space. Another strength is that the original repository provides a relatively explicit configuration-driven workflow, which makes it suitable for structured refactoring and documentation.</p>
+</section>
+<section id="limitations" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="limitations"><span class="header-section-number">8.2</span> 8.2 Limitations</h2>
+<p>A limitation of the original project is that it depends on the Selene framework and several external runtime data files, which makes the execution pipeline less transparent for beginners. In addition, the repository structure of the original implementation is not fully aligned with a standard modular engineering layout, so understanding the relationship among the model file, configuration files, and training scripts requires extra effort. Another practical limitation is that actual reproduction depends on preparing the correct environment and external datasets.</p>
+</section>
+<section id="suitable-use-cases" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="suitable-use-cases"><span class="header-section-number">8.3</span> 8.3 Suitable use cases</h2>
+<p>DeepFormer is suitable for sequence-level functional prediction tasks where the input is DNA sequence and the output consists of multiple functional labels. It is also a useful example for studying how convolutional sequence models can be combined with attention-style modules. In the context of this refactored project, DeepFormer is particularly suitable as a teaching-oriented case for understanding project restructuring, configuration-driven training, and sequence model reproduction.</p>
+</section>
+<section id="role-of-this-refactored-repository" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="role-of-this-refactored-repository"><span class="header-section-number">8.4</span> 8.4 Role of this refactored repository</h2>
+<p>The refactored version is especially useful for learning and presentation purposes. By reorganizing the original implementation into a clearer directory structure, this repository makes it easier to explain what each part of the project does, how the components are related, and what still needs to be prepared before runtime execution.</p>
+</section>
+</section>
+<section id="conclusion" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> 9. Conclusion</h1>
+<section id="summary" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="summary"><span class="header-section-number">9.1</span> 9.1 Summary</h2>
+<p>This project reorganizes the original DeepFormer implementation into a clearer engineering structure with separate folders for configuration, model definition, training, evaluation, scripts, data instructions, and documentation. The goal is not only to preserve the original logic of DeepFormer, but also to make the repository easier to read, explain, and maintain.</p>
+</section>
+<section id="what-has-been-completed" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="what-has-been-completed"><span class="header-section-number">9.2</span> 9.2 What has been completed</h2>
+<p>At the current stage, the repository structure, configuration files, model scaffold, training and evaluation entry points, helper scripts, dependency list, and QMD documentation have all been prepared. This means that the project is already in a strong state for explanation, demonstration, and future execution.</p>
+</section>
+<section id="what-remains-to-be-done" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="what-remains-to-be-done"><span class="header-section-number">9.3</span> 9.3 What remains to be done</h2>
+<p>The main remaining tasks are environment setup, preparation of the required runtime data files, execution testing on a proper machine or server, and the collection of actual reproduction results. After these steps are completed, this documentation can be further updated with concrete outputs and result analysis.</p>
+</section>
+<section id="final-remark" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="final-remark"><span class="header-section-number">9.4</span> 9.4 Final remark</h2>
+<p>DeepFormer serves as a useful example of how a sequence-based deep learning model can be studied not only from the perspective of model architecture, but also from the perspective of repository organization, reproducibility, and engineering clarity. This refactored project is therefore both a reproduction scaffold and a structured learning resource.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
