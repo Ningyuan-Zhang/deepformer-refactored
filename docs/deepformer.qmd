@@ -39,13 +39,11 @@ Based on the output format and the loss function, DeepFormer should be regarded 
 
 # 3. Data Preparation
 
-## 3.1 Official public data route
+## 3.1 Public data route
 
-The official public data route documented by the original DeepFormer repository is the DeepSEA training, validation, and testing bundle:
+The original DeepFormer repository points to the DeepSEA public training bundle as the official source of the training, validation, and testing data. However, the legacy direct download link is no longer reliably accessible. Therefore, the practical public route for this refactored project is to reconstruct the DeepSEA-style dataset from publicly available resources.
 
-`http://deepsea.princeton.edu/media/code/deepsea_train_bundle.v0.9.tar.gz`
-
-The original README instructs users to extract the bundle and place the three `.mat` files into the `data/` directory.
+The final expected dataset files are `train.mat`, `valid.mat`, and `test.mat`.
 
 ## 3.2 Runtime files expected by the current refactored configuration
 

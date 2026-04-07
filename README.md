@@ -46,13 +46,9 @@ This refactored repository records the same dependency direction, while the actu
 
 ## Data Source
 
-This repository does not include the full runtime datasets.
+The original DeepFormer repository points to the public DeepSEA training bundle as the official data source. However, the legacy direct download link is no longer reliably accessible. Therefore, in this refactored project, the DeepSEA dataset should be treated as an externally reconstructed dataset based on publicly available resources.
 
-The original DeepFormer repository explicitly points users to the public DeepSEA training, validation, and testing bundle:
-
-`http://deepsea.princeton.edu/media/code/deepsea_train_bundle.v0.9.tar.gz`
-
-After downloading and extracting the bundle, the original README instructs users to place the three `.mat` files into the `data/` directory.
+A practical public alternative is to rebuild the DeepSEA-style `train.mat`, `valid.mat`, and `test.mat` files using the public reconstruction workflow described in the `build-deepsea-training-dataset` project.
 
 ## Required Runtime Files in This Refactored Project
 

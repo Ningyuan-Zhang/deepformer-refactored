@@ -2,13 +2,17 @@
 
 This repository does not store the full DeepFormer runtime dataset.
 
-## Official Public Data Route
+## Public Data Route
 
-According to the original DeepFormer repository, the official public data route is the DeepSEA training, validation, and testing bundle:
+The original DeepFormer repository refers to the DeepSEA public data bundle. Since the legacy direct download link is no longer reliably available, this project uses the DeepSEA public-data reconstruction route as the practical public alternative.
 
-`http://deepsea.princeton.edu/media/code/deepsea_train_bundle.v0.9.tar.gz`
+The expected final dataset files are:
 
-After downloading and extracting this bundle, the original README instructs users to place the three `.mat` files into the `data/` directory.
+- `train.mat`
+- `valid.mat`
+- `test.mat`
+
+These files can be reconstructed from publicly available metadata, BED files, and the hg19 reference genome using the DeepSEA reconstruction workflow.
 
 ## Runtime Files Expected by This Refactored Repository
 
