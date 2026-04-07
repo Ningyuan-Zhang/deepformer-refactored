@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from selene_sdk.utils.config import load_path, parse_configs_and_run
+from selene_sdk.utils import load_path, parse_configs_and_run
 
 
 def main():

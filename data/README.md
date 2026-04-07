@@ -1,24 +1,26 @@
 # Data
 
-This repository does not include the full DeepFormer training and evaluation datasets.
+This repository does not store the full DeepFormer runtime dataset.
 
-## Required files at runtime
+## Official Public Data Route
 
-The following files are expected under `data/` when running training or evaluation:
+According to the original DeepFormer repository, the official public data route is the DeepSEA training, validation, and testing bundle:
+
+`http://deepsea.princeton.edu/media/code/deepsea_train_bundle.v0.9.tar.gz`
+
+After downloading and extracting this bundle, the original README instructs users to place the three `.mat` files into the `data/` directory.
+
+## Runtime Files Expected by This Refactored Repository
+
+The current configuration files in this refactored project expect the following runtime files:
 
 - `male.hg19.fasta`
 - `distinct_features.txt`
 - `sorted_deepsea_data.bed.gz`
 - `TF_intervals.txt`
 
-## Notes
+These files are not included in the GitHub repository itself and must be prepared externally before runtime execution.
 
-- These files are required by the configuration files.
-- They are not included in this GitHub repository because they are external data files and may be large.
-- They should be prepared locally or on the server before running the project.
+## Practical Note
 
-## Current status
-
-- [ ] Prepare local data files
-- [ ] Prepare server data files
-- [ ] Verify file paths in YAML configuration
+The public DeepSEA bundle should be treated as the official public starting point for data acquisition. Additional processing or file preparation may still be required in order to match the runtime file names and formats expected by the current configuration files.
