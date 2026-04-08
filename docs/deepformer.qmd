@@ -205,3 +205,52 @@ DeepFormer serves as a useful example of how a sequence-based deep learning mode
 ## 9.5 Data and execution note
 
 The public DeepSEA bundle provides the official public data route for this project. However, full execution still requires the final runtime file layout expected by the current configuration files. Therefore, this repository should be understood as both a structured learning resource and a refactored reproduction scaffold.
+
+# 10. Public DeepSEA Data Reconstruction
+
+## 10.1 Motivation
+
+The original DeepFormer repository refers to the DeepSEA public bundle as the official public data route. However, the legacy direct download link is no longer reliably accessible. Therefore, this project adopts a public reconstruction route based on publicly available source files.
+
+## 10.2 Reconstruction workflow
+
+The reconstruction workflow consisted of the following stages:
+
+1. download public DeepSEA-related source files;
+2. verify and repair interrupted downloads when necessary;
+3. decompress all source files;
+4. prepare the hg19 reference genome;
+5. merge chromosome FASTA files into a single `hg19.fa`;
+6. run the reconstruction script to generate:
+   - `train.mat`
+   - `valid.mat`
+   - `test.mat`
+
+## 10.3 Output files
+
+The generated files were copied into the refactored project under:
+
+- `data/raw_deepsea/train.mat`
+- `data/raw_deepsea/valid.mat`
+- `data/raw_deepsea/test.mat`
+
+A structural summary of the generated `.mat` files is recorded in:
+
+- `results/deepsea_mat_summary.txt`
+
+## 10.4 Project significance
+
+This reconstruction result is an important project milestone because it demonstrates that the dataset can be rebuilt from public sources without depending on expired legacy links.
+
+It also provides concrete artifacts that can be inspected, explained, and presented during project demonstration and defense.
+
+## 10.5 Current limitation
+
+Although the `.mat` files have been successfully reconstructed, the current refactored YAML runtime configuration still expects a different runtime file layout based on FASTA / BED / TXT inputs. Therefore, the reconstruction result should currently be understood as a completed public-data milestone rather than a direct final runtime input for the existing configuration.
+
+## 10.6 Next technical direction
+
+The next technical step is to decide between two directions:
+
+- reconstruct the exact runtime files expected by the current YAML configuration, or
+- introduce a separate `.mat`-based execution route for the reconstructed DeepSEA dataset.
