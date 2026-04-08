@@ -16,3 +16,14 @@ data/*.bed.gz
 
 .DS_Store
 Thumbs.db
+
+# DeepSEA reconstruction artifacts
+deepsea_rebuild/
+data/raw_deepsea/*.mat
+data/raw_deepsea/*.npy
+
+# large genome files
+*.fa
+*.fasta
+*.tar.gz
+*.gz
