@@ -1,84 +1,337 @@
-# DeepFormer Refactored
+<div align="center">
 
-This repository is a refactored DeepFormer project organized in a unified engineering style.
+# 🧬 DeepFormer Refactored
 
-## Project Goal
+### Public-data reconstruction, MAT-route engineering, and demo-executable DeepFormer workflow
 
-The goal of this project is to:
+</div>
 
-- study and explain the DeepFormer model
-- reorganize the original repository into a clearer engineering structure
-- prepare configuration files, model code, training entry points, and evaluation entry points
-- document the project in Quarto (`.qmd`) format
-- support future runtime validation and reproduction on a server environment
+---
 
-## Repository Structure
+## 📌 Project Overview
 
-- `config/`: training and evaluation configuration files
-- `data/`: data instructions and runtime data placeholders
-- `docs/`: Quarto documentation
-- `models/`: model definition
-- `results/`: runtime outputs
-- `scripts/`: helper scripts
-- `training/`: training and evaluation entry points
-- `utils/`: utility functions
-- `README.md`: project overview
-- `USAGE.md`: usage guide
-- `requirements.txt`: dependency list
-- `run_example_pipeline.sh`: example pipeline script
+This project refactors the original DeepFormer workflow into a clearer engineering repository and builds a **publicly reconstructable data route** that does not rely on an expired legacy download path.
 
-## Model Overview
+The repository currently provides:
 
-DeepFormer is a hybrid neural network for DNA sequence function prediction. According to the original repository, it combines convolutional neural networks with a linear attention mechanism and achieves strong performance on the DeepSEA benchmark.
+- a refactored DeepFormer project structure;
+- a reconstructed public DeepSEA-style dataset route;
+- HDF5-compatible MAT verification;
+- a MAT-based PyTorch loading pipeline;
+- demo subset generation;
+- DeepFormer forward validation;
+- tiny demo training;
+- lightweight demo evaluation.
 
-## Dependencies
+At the current stage, this project should be regarded as a:
 
-The original DeepFormer repository specifies the following recommended environment:
+- **presentation-ready engineering project**
+- **demo-executable DeepFormer prototype**
+- **public-data-reconstructed workflow**
+- **not yet a full paper-level reproduction**
 
-- Python 3.9
-- selene-sdk 0.4.4
-- einops 0.5.0
-- pytorch 1.7.1
-- torchvision 0.8.2
-- torchaudio 0.7.2
+---
 
-This refactored repository records the same dependency direction, while the actual runtime environment may require practical adjustments depending on the server setup.
+## ✅ Current Status
 
-## Data Source
+The project has already completed the following milestones:
 
-The original DeepFormer repository points to the public DeepSEA training bundle as the official data source. However, the legacy direct download link is no longer reliably accessible. Therefore, in this refactored project, the DeepSEA dataset should be treated as an externally reconstructed dataset based on publicly available resources.
+- [x] Public DeepSEA-style data reconstruction
+- [x] HDF5-compatible MAT verification
+- [x] Demo subset generation
+- [x] PyTorch DataLoader validation
+- [x] DeepFormer forward-pass validation
+- [x] Tiny demo training
+- [x] Demo checkpoint saving
+- [x] Lightweight demo evaluation
 
-A practical public alternative is to rebuild the DeepSEA-style `train.mat`, `valid.mat`, and `test.mat` files using the public reconstruction workflow described in the `build-deepsea-training-dataset` project.
+### Current project level
 
-## Required Runtime Files in This Refactored Project
+| Level | Status |
+|---|---|
+| Presentation-ready | ✅ Completed |
+| Engineering-demo complete | ✅ Completed |
+| Full benchmark-grade reproduction | ❌ Not yet completed |
+| Full interpretability experiment | ❌ Not yet completed |
 
-The current configuration files in this refactored repository expect the following runtime data files:
+---
 
-- `data/male.hg19.fasta`
-- `data/distinct_features.txt`
-- `data/sorted_deepsea_data.bed.gz`
-- `data/TF_intervals.txt`
+## 🧭 Best-Practice Framework
 
-Therefore, the public DeepSEA bundle should be understood as the public starting point for data acquisition, while additional runtime file preparation may still be required before full execution.
+This project is organized under a three-layer best-practice view.
 
-## Recommended Reproduction Scope
+### 1. Data Layer
+Focuses on:
 
-For the current refactored project, the recommended scope is:
+- public-data reconstruction;
+- MAT-file verification;
+- demo-subset preparation;
+- data-structure validation;
+- current data-layer limitations.
 
-1. use the public DeepSEA bundle as the official data source;
-2. keep the repository structure, documentation, and engineering layout complete and reproducible;
-3. treat runtime execution as a follow-up step that depends on preparing the expected runtime files under `data/`.
+Related files:
 
-## Main Execution Entry Points
+- `docs/data_layer_best_practices.md`
+- `docs/data_layer_current_status.md`
 
-### Training
-- configuration: `config/train_deepformer.yaml`
-- entry point: `training/train.py`
+### 2. Methodology Layer
+Focuses on:
 
-### Evaluation
-- configuration: `config/evaluate_deepformer.yaml`
-- entry point: `training/evaluate.py`
+- MAT-route loader construction;
+- demo subset route;
+- DeepFormer forward validation;
+- tiny demo training;
+- lightweight demo evaluation;
+- executable engineering chain.
 
-## Notes
+Related files:
 
-This repository is intended to serve both as a refactored reproduction scaffold and as a structured learning resource for understanding DeepFormer, configuration-driven sequence modeling, and repository organization.
+- `docs/methodology_layer_best_practices.md`
+- `docs/methodology_layer_current_status.md`
+
+### 3. Interpretability Layer
+Focuses on:
+
+- attribution-to-motif workflow planning;
+- interpretability tool-chain design;
+- future roadmap for DeepLIFT / DeepExplainer / TF-MoDISco / grammar analysis.
+
+Related files:
+
+- `docs/interpretability_layer_best_practices.md`
+- `docs/interpretability_layer_roadmap.md`
+
+---
+
+## 🏗 Repository Structure
+
+```text
+deepformer-refactored/
+├── config/                         # configuration files
+├── data/
+│   ├── README.md
+│   └── raw_deepsea/                # reconstructed MAT files (runtime artifacts)
+├── docs/                           # project documents and QMD report
+├── models/                         # model definitions
+├── results/                        # lightweight logs and summaries
+├── scripts/                        # utility / testing / demo scripts
+├── training/                       # training and evaluation entry files
+├── utils/                          # dataset loaders and helper modules
+├── README.md
+├── USAGE.md
+└── requirements.txt
+```
+
+---
+
+## 📂 Public Data Reconstruction
+
+The original legacy public DeepSEA-style route was no longer reliably accessible, so this project adopts a **public reconstruction workflow**.
+
+Using public source files and the hg19 reference genome, the following dataset files were reconstructed:
+
+- `train.mat`
+- `valid.mat`
+- `test.mat`
+
+These files are stored under:
+
+- `data/raw_deepsea/train.mat`
+- `data/raw_deepsea/valid.mat`
+- `data/raw_deepsea/test.mat`
+
+### Verified MAT structure
+
+The reconstructed MAT files were inspected and confirmed to be **HDF5-compatible** rather than standard `scipy.io.loadmat` MATLAB files.
+
+| File | Input key | Input shape | Label key | Label shape |
+|---|---|---:|---|---:|
+| `train.mat` | `trainxdata` | `(4400000, 1000, 4)` | `traindata` | `(4400000, 919)` |
+| `valid.mat` | `validxdata` | `(8000, 1000, 4)` | `validdata` | `(8000, 919)` |
+| `test.mat` | `testxdata` | `(455024, 1000, 4)` | `testdata` | `(455024, 919)` |
+
+Additional summary:
+
+- `results/deepsea_mat_summary.txt`
+
+---
+
+## 🧪 MAT-Route Demo Pipeline
+
+A dedicated MAT-based engineering route was built to connect reconstructed public data to the refactored DeepFormer code.
+
+### Demo pipeline
+
+```text
+public data reconstruction
+    -> MAT verification
+    -> demo subset generation
+    -> PyTorch DataLoader test
+    -> DeepFormer forward test
+    -> tiny demo training
+    -> checkpoint saving
+    -> lightweight demo evaluation
+```
+
+### Demo subset files
+
+Small `.npz` subsets were generated for rapid testing and presentation:
+
+- `data/raw_deepsea/demo_subset/train_demo_256.npz`
+- `data/raw_deepsea/demo_subset/valid_demo_256.npz`
+- `data/raw_deepsea/demo_subset/test_demo_256.npz`
+
+These subsets preserve the same basic structure as the full MAT files while enabling fast debugging and demonstration.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Activate environment
+
+```bash
+source "$(conda info --base)/etc/profile.d/conda.sh"
+conda activate ~/ningyuan/envs/deepformer_clean
+```
+
+### 2. Test the demo NPZ loader
+
+```bash
+python scripts/test_deepsea_demo_npz.py
+```
+
+### 3. Inspect the DeepFormer constructor
+
+```bash
+python scripts/inspect_deepformer_signature.py
+```
+
+### 4. Run a forward-pass validation
+
+```bash
+python scripts/test_deepformer_forward.py
+```
+
+### 5. Run tiny demo training
+
+```bash
+python scripts/run_deepformer_demo_train.py
+```
+
+### 6. Run demo evaluation
+
+```bash
+python scripts/run_deepformer_demo_eval.py
+```
+
+---
+
+## 📊 Result Summaries
+
+Lightweight result artifacts are stored in `results/`, including:
+
+- `results/deepsea_mat_summary.txt`
+- `results/deepformer_demo_train_log.txt`
+- `results/deepformer_demo_result_summary.txt`
+- `results/deepformer_demo_eval_log.txt`
+- `results/final_demo_status.txt`
+- `results/methodology_layer_summary.txt`
+- `results/interpretability_layer_plan.txt`
+
+These files are intentionally small and presentation-friendly.
+
+Large runtime artifacts such as MAT files, demo NPZ subsets, genome archives, and large checkpoints are not intended to be committed to GitHub as ordinary repository content.
+
+---
+
+## 🧠 What Has Been Achieved
+
+This project has already demonstrated that DeepFormer can be turned into a **public-data-reconstructed and demo-executable engineering workflow**.
+
+The most important completed value is:
+
+> the project no longer depends on an expired legacy public-data link and now provides a verifiable route from public data reconstruction to model-connected demo execution.
+
+Concretely, the project already supports:
+
+- reconstructed public dataset artifacts;
+- HDF5-compatible MAT inspection;
+- MAT-based dataset loading;
+- demo data extraction;
+- forward-pass verification;
+- tiny training;
+- lightweight evaluation.
+
+---
+
+## ⚠️ Current Limitations
+
+This repository is not yet a full paper-level reproduction.
+
+### Current limitations include:
+
+- the current YAML runtime path still expects another FASTA / BED / TXT file family;
+- the reconstructed MAT route currently exists as a parallel executable route rather than a complete replacement for the original runtime path;
+- no peak-vs-coverage paired comparison has been implemented yet;
+- no benchmark-grade full training experiment has been completed yet;
+- no final attribution/motif/grammar interpretability experiment has been completed yet.
+
+Therefore, this project should currently be interpreted as:
+
+- **engineering-complete at demo level**
+- **strong at repository organization and public-data reconstruction**
+- **not yet a benchmark-grade reproduction**
+
+---
+
+## 📘 Main Documents
+
+### General project documents
+- `USAGE.md`
+- `docs/final_project_status.md`
+- `docs/defense_talking_points.md`
+
+### Data layer
+- `docs/data_layer_best_practices.md`
+- `docs/data_layer_current_status.md`
+
+### Methodology layer
+- `docs/methodology_layer_best_practices.md`
+- `docs/methodology_layer_current_status.md`
+
+### Interpretability layer
+- `docs/interpretability_layer_best_practices.md`
+- `docs/interpretability_layer_roadmap.md`
+
+### DeepFormer / MAT-route / demo pipeline
+- `docs/deepformer.qmd`
+- `docs/deepsea_data_reconstruction.md`
+- `docs/runtime_gap_analysis.md`
+- `docs/deepsea_mat_route.md`
+- `docs/deepsea_demo_pipeline.md`
+- `docs/demo_evaluation.md`
+
+---
+
+## 🔮 Future Work
+
+The most natural next steps are:
+
+1. fully unify the MAT route with the main runtime configuration;
+2. add a peak-vs-coverage methodology comparison;
+3. extend the project to a more formal benchmark-grade training and evaluation setting;
+4. integrate interpretability tools such as:
+   - DeepLIFT
+   - DeepExplainer
+   - TF-MoDISco
+   - Tangermeme
+
+---
+
+## 🏁 Final Position
+
+A concise summary of the current project status is:
+
+> DeepFormer Refactored has already evolved into a **presentation-ready, public-data-reconstructed, demo-executable engineering project**, although full benchmark-grade reproduction and interpretability experiments remain future work.
+
+---
