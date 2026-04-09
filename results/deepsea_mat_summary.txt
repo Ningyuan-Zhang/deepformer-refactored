@@ -1,0 +1,21 @@
+================================================================================
+FILE: data/raw_deepsea/train.mat
+SCIPY_LOADMAT_FAILED: ValueError: Unknown mat file type, version 0, 0
+FORMAT: HDF5-compatible
+KEYS: ['traindata', 'trainxdata']
+traindata: dataset shape=(4400000, 919), dtype=uint8
+trainxdata: dataset shape=(4400000, 1000, 4), dtype=uint8
+================================================================================
+FILE: data/raw_deepsea/valid.mat
+SCIPY_LOADMAT_FAILED: ValueError: Unknown mat file type, version 0, 0
+FORMAT: HDF5-compatible
+KEYS: ['validdata', 'validxdata']
+validdata: dataset shape=(8000, 919), dtype=uint8
+validxdata: dataset shape=(8000, 1000, 4), dtype=uint8
+================================================================================
+FILE: data/raw_deepsea/test.mat
+SCIPY_LOADMAT_FAILED: ValueError: Unknown mat file type, version 0, 0
+FORMAT: HDF5-compatible
+KEYS: ['testdata', 'testxdata']
+testdata: dataset shape=(455024, 919), dtype=uint8
+testxdata: dataset shape=(455024, 1000, 4), dtype=uint8

@@ -1,0 +1,9 @@
+DEVICE: cpu
+STEP 1 | TRAIN LOSS 0.693816
+STEP 2 | TRAIN LOSS 0.396004
+STEP 3 | TRAIN LOSS 0.154698
+STEP 4 | TRAIN LOSS 0.065701
+STEP 5 | TRAIN LOSS 0.243963
+VALID LOSS: 0.9234312176704407
+VALID OUTPUT SHAPE: (4, 919)
+CHECKPOINT SAVED TO: /mnt/public5/genomebench/ningyuan/projects/deepformer-refactored/results/deepformer_demo_model.pt

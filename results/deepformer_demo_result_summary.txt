@@ -1,0 +1,10 @@
+DeepFormer demo MAT-route result summary
+
+1. Public DeepSEA MAT files were reconstructed successfully.
+2. MAT files were verified as HDF5-compatible.
+3. DeepSEA demo subset NPZ files were generated successfully.
+4. Demo DataLoader test passed.
+5. DeepFormer forward test passed.
+6. Tiny demo training completed on CPU.
+7. A demo checkpoint was saved to:
+   results/deepformer_demo_model.pt
