@@ -72,6 +72,15 @@ A complete demo pipeline was achieved:
 
 public data reconstruction -> MAT verification -> demo subset generation -> DataLoader test -> model forward -> tiny training -> checkpoint saving
 
+### 7. Demo evaluation
+A lightweight demo evaluation stage was added on top of the tiny demo training result. The evaluation confirmed that:
+
+- the saved checkpoint could be loaded successfully;
+- the validation demo subset could be evaluated correctly;
+- validation loss and basic prediction statistics could be computed.
+
+This means the project now contains a complete demonstration pipeline including both training and evaluation.
+
 ## What has not yet been fully completed
 
 ### 1. Full integration with the current YAML runtime path

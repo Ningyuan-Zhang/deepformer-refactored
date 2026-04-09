@@ -53,3 +53,15 @@ The next step would be one of the following:
 ## 8. What is the best one-sentence summary?
 
 This project transformed DeepFormer from a partially inaccessible legacy workflow into a publicly reconstructable and demo-executable engineering project.
+
+## 9. Do I already have training and evaluation?
+
+Yes, but at the current stage they are demo-level rather than full benchmark-level.
+
+The project already includes:
+
+- tiny demo training;
+- checkpoint saving;
+- lightweight demo evaluation.
+
+This is sufficient to demonstrate an executable engineering pipeline, although it is not yet equivalent to a full paper-level reproduction experiment.

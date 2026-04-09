@@ -1,0 +1,10 @@
+DeepFormer refactored final demo status
+
+1. Public DeepSEA data reconstruction completed.
+2. HDF5-compatible MAT files verified.
+3. Demo subset NPZ files generated.
+4. Demo DataLoader test passed.
+5. DeepFormer forward test passed.
+6. Tiny demo training completed successfully.
+7. Demo checkpoint saved successfully.
+8. Demo evaluation completed successfully.
