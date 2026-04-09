@@ -1,0 +1,24 @@
+Interpretability layer plan
+
+1. Current status:
+   - No final attribution results yet
+   - No motif discovery results yet
+   - No grammar analysis results yet
+
+2. Current prerequisites already available:
+   - Runnable DeepFormer model
+   - Demo forward route
+   - Tiny training route
+   - Reloadable demo checkpoint
+
+3. Planned next interpretability stages:
+   - Base-level attribution
+   - Motif-level summarization
+   - Grammar-level analysis
+   - Validation-oriented interpretation
+
+4. Candidate tools:
+   - DeepLIFT
+   - DeepExplainer
+   - TF-MoDISco
+   - Tangermeme

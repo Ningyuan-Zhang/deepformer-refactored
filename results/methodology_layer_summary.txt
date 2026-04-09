@@ -1,0 +1,18 @@
+Methodology layer summary
+
+1. Current implemented task route:
+   Binary peak-style sequence modeling route
+
+2. Completed engineering milestones:
+   - HDF5-compatible MAT route established
+   - Demo subset NPZ route established
+   - PyTorch loader implemented
+   - DataLoader test passed
+   - DeepFormer forward test passed
+   - Tiny demo training passed
+   - Demo evaluation passed
+
+3. Current limitation:
+   - No peak vs coverage comparison yet
+   - No base-resolution/profile route execution yet
+   - No benchmark-grade full training experiment yet
