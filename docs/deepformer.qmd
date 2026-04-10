@@ -1,6 +1,6 @@
 ---
 title: "DeepFormer Refactored: Public Data Reconstruction, MAT-Route Engineering, and Demo-Executable Workflow"
-author: "Your Name"
+author: Ningyuan Zhang
 format:
   html:
     theme: cosmo
