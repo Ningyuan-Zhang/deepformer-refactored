@@ -276,12 +276,6 @@ This repository is not yet a full paper-level reproduction.
 - no benchmark-grade full training experiment has been completed yet;
 - no final attribution/motif/grammar interpretability experiment has been completed yet.
 
-Therefore, this project should currently be interpreted as:
-
-- **engineering-complete at demo level**
-- **strong at repository organization and public-data reconstruction**
-- **not yet a benchmark-grade reproduction**
-
 ---
 
 ## 📘 Main Documents

@@ -140,7 +140,6 @@ This document summarizes the final state of the **DeepFormer refactored project*
 - the three-layer best-practice framework.
 
 <div class="hero-grid">
-  <div class="hero-card"><strong>Project level</strong><br>Presentation-ready engineering project</div>
   <div class="hero-card"><strong>Data status</strong><br>Publicly reconstructed and structurally verified</div>
   <div class="hero-card"><strong>Execution status</strong><br>Demo-executable MAT route completed</div>
   <div class="hero-card"><strong>Current limitation</strong><br>Not yet a full paper-level reproduction</div>
@@ -598,13 +597,6 @@ The most natural next steps are:
 4. integrate attribution and motif-level interpretation tools.
 
 # 12. Final Project Position
-
-At the current stage, this project should be understood as:
-
-- a **presentation-ready engineering project**;
-- a **public-data-reconstructed DeepFormer workflow**;
-- a **demo-executable MAT-route prototype**;
-- **not yet** a full benchmark-grade reproduction.
 
 ::: {.callout-note}
 ## Final one-sentence summary
