@@ -1,14 +1,14 @@
 # DeepFormer Refactored
 
-A practical and runnable DeepFormer repository with a reconstructed MAT-based data route for data loading, forward testing, tiny training, lightweight evaluation, and notebook-based demonstration.
+A practical and runnable DeepFormer repository with a reconstructed MAT-based data route for loading, forward testing, tiny training, lightweight evaluation, and notebook-based demonstration.
 
 ---
 
 ## Overview
 
-This repository reorganizes the original DeepFormer project into a cleaner engineering structure and provides a **MAT-based runnable route** for quick validation and demonstration.
+This repository provides a runnable engineering version of DeepFormer based on a **MAT route**.
 
-At the current stage, the repository supports:
+At the current stage, it supports:
 
 - reconstructed `train.mat / valid.mat / test.mat`
 - MAT structure inspection
@@ -19,12 +19,11 @@ At the current stage, the repository supports:
 - lightweight demo evaluation
 - a notebook-based demo workflow
 
-This repository is intended to help new users quickly answer four questions:
+This repository is mainly intended to answer three practical questions:
 
-1. What files are required?
-2. Which environment should be used?
-3. Which scripts should be run first?
-4. What outputs should be generated after each step?
+1. what files are needed,
+2. what should be run first,
+3. what outputs should be expected.
 
 ---
 
@@ -48,16 +47,7 @@ deepformer-refactored/
 
 ---
 
-## Prerequisites
-
-### 1. Clone the repository
-
-```bash
-git clone <your-repo-url>
-cd deepformer-refactored
-```
-
-### 2. Prepare a Python environment
+## Environment setup
 
 A conda environment is recommended.
 
@@ -67,22 +57,24 @@ conda activate deepformer_clean
 pip install -r requirements.txt
 ```
 
-If your local setup uses another environment name, that is also fine. The important point is that the environment must be able to import the required packages and run the scripts in `scripts/`.
-
-### 3. Optional notebook support
-
-If you want to run the notebook demo, install notebook-related packages:
+Optional notebook support:
 
 ```bash
 pip install ipykernel notebook jupyterlab
 python -m ipykernel install --user --name deepformer_clean --display-name "Python (deepformer_clean)"
 ```
 
+Optional check:
+
+```bash
+python -c "import sys; print(sys.executable)"
+```
+
 ---
 
 ## Required data files
 
-The current runnable route assumes that the following files are available under `data/raw_deepsea/`.
+The current runnable route assumes the following files are available under `data/raw_deepsea/`.
 
 ### Full MAT files
 - `data/raw_deepsea/train.mat`
@@ -94,10 +86,8 @@ The current runnable route assumes that the following files are available under 
 - `data/raw_deepsea/demo_subset/valid_demo_256.npz`
 - `data/raw_deepsea/demo_subset/test_demo_256.npz`
 
-The full MAT files are the reconstructed large-scale data artifacts.  
+The MAT files are reconstructed large-scale data artifacts.  
 The demo subset files are smaller extracted files used for quick testing and demonstration.
-
-If these files are not included in your clone, place them in the paths above before running the scripts.
 
 ---
 
@@ -112,25 +102,19 @@ python scripts/run_deepformer_demo_train.py
 python scripts/run_deepformer_demo_eval.py
 ```
 
-This is the shortest practical execution route in the current repository.
+This is the shortest practical route in the current repository.
 
 ---
 
-## Script-based running procedure
+## Step-by-step running procedure
 
-### Step 1. Confirm the project root
-
-Run:
+### Step 1. Enter the repository root
 
 ```bash
 pwd
 ```
 
-You should be inside the repository root directory:
-
-```text
-deepformer-refactored/
-```
+Make sure you are inside the repository root before running scripts.
 
 ---
 
@@ -140,30 +124,19 @@ deepformer-refactored/
 conda activate deepformer_clean
 ```
 
-Optional check:
-
-```bash
-python -c "import sys; print(sys.executable)"
-```
-
-This helps confirm that the expected interpreter is being used.
-
 ---
 
-### Step 3. Test whether the demo subset can be loaded
+### Step 3. Test demo subset loading
 
 ```bash
 python scripts/test_deepsea_demo_npz.py
 ```
 
-This script checks:
+This checks:
 
 - whether the `.npz` demo files can be opened,
-- whether the input shape is correct,
-- whether the label shape is correct,
-- whether the DataLoader can generate batches correctly.
-
-If this step fails, later model steps should not be run yet.
+- whether input and label shapes are correct,
+- whether the DataLoader works correctly.
 
 ---
 
@@ -172,8 +145,6 @@ If this step fails, later model steps should not be run yet.
 ```bash
 python scripts/inspect_deepformer_signature.py
 ```
-
-This script is used to confirm how the current DeepFormer model should be instantiated.
 
 For the current demo route, the expected constructor arguments are:
 
@@ -188,13 +159,7 @@ For the current demo route, the expected constructor arguments are:
 python scripts/test_deepformer_forward.py
 ```
 
-This script checks whether:
-
-- a batch from the demo subset can be passed into the model,
-- the model output shape is correct,
-- the forward pass can finish successfully.
-
-If this step passes, the data-to-model connection is working.
+This checks whether demo data can be passed through the model and whether the output shape is correct.
 
 ---
 
@@ -204,9 +169,7 @@ If this step passes, the data-to-model connection is working.
 python scripts/run_deepformer_demo_train.py
 ```
 
-This is a small demonstration training script, not a full benchmark-scale training run.
-
-It is used to verify:
+This is a small demonstration training run used to verify:
 
 - loss computation,
 - backward propagation,
@@ -227,7 +190,7 @@ Typical output files include:
 python scripts/run_deepformer_demo_eval.py
 ```
 
-This script loads the demo checkpoint and performs a lightweight evaluation on the validation demo subset.
+This loads the demo checkpoint and performs a lightweight evaluation on the validation demo subset.
 
 Typical output files include:
 
@@ -238,26 +201,24 @@ Typical output files include:
 
 ## Notebook-based demo
 
-In addition to the script-based route, the repository also contains a notebook-based demo:
+The repository also contains a notebook-based demo:
 
 - `notebooks/deepformer_gpu_demo_notebook.ipynb`
 
-This notebook is intended for step-by-step demonstration of the current workflow in notebook format.
+This notebook includes:
 
-The notebook includes:
+1. project root setup
+2. dependency import
+3. device checking
+4. demo subset loading
+5. DataLoader construction
+6. DeepFormer construction
+7. forward-pass testing
+8. tiny training
+9. validation
+10. checkpoint and log saving
 
-1. project root setup,
-2. dependency import,
-3. device checking,
-4. demo subset loading,
-5. DataLoader construction,
-6. DeepFormer construction,
-7. forward-pass testing,
-8. tiny training,
-9. validation,
-10. checkpoint and log saving.
-
-### How to use the notebook
+### Usage
 
 Open the notebook in VS Code or Jupyter and select the appropriate kernel.
 
@@ -275,22 +236,20 @@ Important notes:
 
 ## Current MAT route
 
-The current runnable route in this repository is a **MAT-based route**.
+The current runnable route is a **MAT-based route**:
 
-This means:
+1. public data are reconstructed into MAT files;
+2. MAT structure is inspected;
+3. small demo subsets are extracted;
+4. the demo subsets are connected to a PyTorch-compatible loader;
+5. the loader output is connected to DeepFormer;
+6. forward / train / evaluation scripts are built on top of this route.
 
-1. public data were reconstructed into MAT files,
-2. the MAT file structure was inspected,
-3. small demo subsets were extracted,
-4. the demo subsets were connected to a PyTorch-compatible loader,
-5. the loader output was connected to DeepFormer,
-6. forward / train / evaluation scripts were built on top of this route.
-
-The current main route is therefore **not yet the original YAML-based FASTA/BED/TXT runtime path**, but a practical MAT-based execution route.
+So the current main route is **not yet** the original YAML-based FASTA/BED/TXT runtime path, but a practical MAT-based execution route.
 
 ---
 
-## Data shapes used in the current route
+## Data shapes
 
 From the reconstructed MAT files:
 
@@ -317,95 +276,6 @@ A more detailed summary is stored in:
 
 ---
 
-## Recommended order for first-time users
-
-For a first-time user of this repository, the recommended order is:
-
-1. read this `README.md`;
-2. verify the environment;
-3. run `scripts/test_deepsea_demo_npz.py`;
-4. run `scripts/test_deepformer_forward.py`;
-5. run `scripts/run_deepformer_demo_train.py`;
-6. run `scripts/run_deepformer_demo_eval.py`;
-7. inspect the files in `results/`.
-
-This order is simpler and more practical than reading all documents first.
-
----
-
-## Troubleshooting
-
-### 1. Wrong Python interpreter
-
-Check:
-
-```bash
-python -c "import sys; print(sys.executable)"
-```
-
-Make sure the environment is the intended one.
-
----
-
-### 2. Wrong working directory
-
-Check:
-
-```bash
-pwd
-```
-
-Make sure you are inside the repository root before running scripts.
-
----
-
-### 3. Missing demo subset files
-
-Check:
-
-```bash
-ls data/raw_deepsea/demo_subset
-```
-
-If the demo subset files are missing, the demo route will not run.
-
----
-
-### 4. Data loading fails
-
-Run:
-
-```bash
-python scripts/test_deepsea_demo_npz.py
-```
-
-before running any model-related script.
-
----
-
-### 5. Model forward fails
-
-Run:
-
-```bash
-python scripts/test_deepformer_forward.py
-```
-
-before trying training or evaluation.
-
----
-
-### 6. Notebook variables are missing after restart
-
-If the notebook reports errors such as `PROJECT_ROOT is not defined`, it usually means the kernel was restarted and later cells were executed before earlier setup cells.
-
-In this case:
-
-- restart the kernel;
-- run the notebook again from the first cell.
-
----
-
 ## Output files
 
 The most important result files currently include:
@@ -420,16 +290,60 @@ These files provide lightweight evidence that the current route has been execute
 
 ---
 
+## Troubleshooting
+
+### Wrong Python interpreter
+
+```bash
+python -c "import sys; print(sys.executable)"
+```
+
+Make sure the intended environment is being used.
+
+### Missing demo subset files
+
+```bash
+ls data/raw_deepsea/demo_subset
+```
+
+If the demo subset files are missing, the demo route will not run.
+
+### Data loading fails
+
+Run:
+
+```bash
+python scripts/test_deepsea_demo_npz.py
+```
+
+before running model-related scripts.
+
+### Model forward fails
+
+Run:
+
+```bash
+python scripts/test_deepformer_forward.py
+```
+
+before trying training or evaluation.
+
+### Notebook variables are missing after restart
+
+If the notebook reports errors such as `PROJECT_ROOT is not defined`, restart the kernel and run again from the first cell.
+
+---
+
 ## Current scope
 
-The repository already provides a runnable engineering route, but several things are still not finished:
+The repository already provides a runnable engineering route, but several parts are still unfinished:
 
 - the MAT route is not yet fully unified with the original YAML runtime path;
 - the current training/evaluation flow is demo-scale rather than benchmark-scale;
 - peak-vs-coverage comparison has not yet been added;
 - interpretability scripts and final outputs have not yet been completed.
 
-Therefore, this repository should currently be understood as a **runnable engineering version**, not a full paper-level reproduction.
+So this repository should currently be understood as a **runnable engineering version**, not a full paper-level reproduction.
 
 ---
 
@@ -457,8 +371,6 @@ If more detailed notes are needed, refer to:
 ---
 
 ## Minimal command summary
-
-If you only want the current shortest runnable path, use:
 
 ```bash
 python scripts/test_deepsea_demo_npz.py
