@@ -1,25 +1,42 @@
 # DeepFormer Refactored
 
-A practical and runnable DeepFormer repository with a reconstructed MAT-based data route for loading, forward testing, tiny training, lightweight evaluation, and notebook-based demonstration.
+A practical and runnable DeepFormer repository with a reconstructed MAT-based route for data loading, forward testing, tiny training, lightweight evaluation, and notebook-based demonstration.
 
 ---
 
-## Overview
+## Method overview
 
-This repository provides a runnable engineering version of DeepFormer based on a **MAT route**.
+This repository is based on the **original DeepFormer method**, and mainly focuses on project restructuring, public-data reconstruction, and runnable demo workflow construction.
 
-At the current stage, it supports:
+```mermaid
+flowchart LR
+    A[Input DNA sequence<br/>one-hot encoded] --> B[CNN blocks<br/>local motif / local pattern extraction]
+    B --> C[Flow-Attention module<br/>long-range feature interaction]
+    C --> D[Fully connected layers]
+    D --> E[Multi-label output<br/>919 targets]
+```
 
-- reconstructed `train.mat / valid.mat / test.mat`
-- MAT structure inspection
-- demo subset loading from `.npz`
-- DeepFormer model instantiation
-- forward-pass validation
-- tiny demo training
-- lightweight demo evaluation
-- a notebook-based demo workflow
+The figure above is a simplified schematic summary for README presentation. It is not the original figure from the paper, but a repository-level overview based on the original DeepFormer method description.
 
+---
 
+## Method source
+
+This repository is **not the original DeepFormer method repository**.
+
+The original method comes from:
+
+- **Original repository**: `YZ20211221/DeepFormer`
+- **Original paper**:  
+  Yao Z, Zhang W, Song P, Hu Y, Liu J.  
+  *DeepFormer: a hybrid network based on convolutional neural network and flow-attention mechanism for identifying the function of DNA sequences.*  
+  *Briefings in Bioinformatics*, 2023, 24(2): bbad095.
+
+This repository mainly focuses on:
+
+- restructuring the project into a clearer engineering layout;
+- reconstructing a public MAT-based data route;
+- building a runnable demo workflow for loading, forward testing, tiny training, and lightweight evaluation.
 
 ---
 
@@ -53,7 +70,7 @@ conda activate deepformer_clean
 pip install -r requirements.txt
 ```
 
-Optional notebook support:
+If notebook execution is needed:
 
 ```bash
 pip install ipykernel notebook jupyterlab
@@ -98,13 +115,13 @@ python scripts/run_deepformer_demo_train.py
 python scripts/run_deepformer_demo_eval.py
 ```
 
-This is the shortest practical route in the current repository.
+This is the shortest practical execution route in the current repository.
 
 ---
 
 ## Step-by-step running procedure
 
-### Step 1. Enter the repository root
+### Step 1. Confirm the repository root
 
 ```bash
 pwd
@@ -112,15 +129,11 @@ pwd
 
 Make sure you are inside the repository root before running scripts.
 
----
-
 ### Step 2. Activate the environment
 
 ```bash
 conda activate deepformer_clean
 ```
-
----
 
 ### Step 3. Test demo subset loading
 
@@ -130,11 +143,9 @@ python scripts/test_deepsea_demo_npz.py
 
 This checks:
 
-- whether the `.npz` demo files can be opened,
-- whether input and label shapes are correct,
+- whether the `.npz` demo files can be opened;
+- whether input and label shapes are correct;
 - whether the DataLoader works correctly.
-
----
 
 ### Step 4. Inspect the DeepFormer constructor
 
@@ -147,8 +158,6 @@ For the current demo route, the expected constructor arguments are:
 - `sequence_length = 1000`
 - `n_targets = 919`
 
----
-
 ### Step 5. Run a forward-pass validation
 
 ```bash
@@ -156,8 +165,6 @@ python scripts/test_deepformer_forward.py
 ```
 
 This checks whether demo data can be passed through the model and whether the output shape is correct.
-
----
 
 ### Step 6. Run tiny demo training
 
@@ -167,9 +174,9 @@ python scripts/run_deepformer_demo_train.py
 
 This is a small demonstration training run used to verify:
 
-- loss computation,
-- backward propagation,
-- optimizer update,
+- loss computation;
+- backward propagation;
+- optimizer update;
 - checkpoint saving.
 
 Typical output files include:
@@ -177,8 +184,6 @@ Typical output files include:
 - `results/deepformer_demo_train_log.txt`
 - `results/deepformer_demo_result_summary.txt`
 - `results/deepformer_demo_model.pt`
-
----
 
 ### Step 7. Run lightweight demo evaluation
 
@@ -203,17 +208,22 @@ The repository also contains a notebook-based demo:
 
 This notebook includes:
 
-1. project root setup
-2. dependency import
-3. device checking
-4. demo subset loading
-5. DataLoader construction
-6. DeepFormer construction
-7. forward-pass testing
-8. tiny training
-9. validation
-10. checkpoint and log saving
+1. project root setup;
+2. dependency import;
+3. device checking;
+4. demo subset loading;
+5. DataLoader construction;
+6. DeepFormer construction;
+7. forward-pass testing;
+8. tiny training;
+9. validation;
+10. checkpoint and log saving.
 
+### Usage notes
+
+- always run the notebook from the first cell;
+- if the kernel is restarted, run all earlier cells again;
+- if the environment changes, restart the kernel before re-running.
 
 ---
 
@@ -273,6 +283,62 @@ These files provide lightweight evidence that the current route has been execute
 
 ---
 
+## Troubleshooting
+
+### Wrong Python interpreter
+
+```bash
+python -c "import sys; print(sys.executable)"
+```
+
+Make sure the intended environment is being used.
+
+### Missing demo subset files
+
+```bash
+ls data/raw_deepsea/demo_subset
+```
+
+If the demo subset files are missing, the demo route will not run.
+
+### Data loading fails
+
+Run:
+
+```bash
+python scripts/test_deepsea_demo_npz.py
+```
+
+before running model-related scripts.
+
+### Model forward fails
+
+Run:
+
+```bash
+python scripts/test_deepformer_forward.py
+```
+
+before trying training or evaluation.
+
+### Notebook variables are missing after restart
+
+If the notebook reports errors such as `PROJECT_ROOT is not defined`, restart the kernel and run again from the first cell.
+
+---
+
+## Current scope
+
+The repository already provides a runnable engineering route, but several parts are still unfinished:
+
+- the MAT route is not yet fully unified with the original YAML runtime path;
+- the current training/evaluation flow is demo-scale rather than benchmark-scale;
+- peak-vs-coverage comparison has not yet been added;
+- interpretability scripts and final outputs have not yet been completed.
+
+So this repository should currently be understood as a **runnable engineering version**, not a full paper-level reproduction.
+
+---
 
 ## Additional documentation
 
@@ -294,14 +360,5 @@ If more detailed notes are needed, refer to:
 - `docs/deepformer.qmd`
 - `docs/final_project_status.md`
 - `docs/defense_talking_points.md`
+````
 
----
-
-## Minimal command summary
-
-```bash
-python scripts/test_deepsea_demo_npz.py
-python scripts/test_deepformer_forward.py
-python scripts/run_deepformer_demo_train.py
-python scripts/run_deepformer_demo_eval.py
-```
