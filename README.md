@@ -32,7 +32,6 @@ At the current stage, it includes:
 - lightweight demo evaluation
 - notebook-based demonstration
 
-The current main executable route is a **MAT-based route**, which is suitable for practical loading, testing, and demonstration.
 
 ---
 
@@ -123,7 +122,6 @@ This is the shortest practical execution route in the current repository.
 pwd
 ```
 
-Make sure you are inside the repository root before running scripts.
 
 ### Step 2. Activate the environment
 
@@ -215,12 +213,6 @@ This notebook includes:
 9. validation
 10. checkpoint and log saving
 
-### Usage notes
-
-- always run the notebook from the first cell
-- if the kernel is restarted, run all earlier cells again
-- if the environment changes, restart the kernel before re-running
-
 ---
 
 ## Current MAT route
@@ -274,52 +266,6 @@ The most important result files currently include:
 - `results/deepformer_demo_result_summary.txt`
 - `results/deepformer_demo_eval_log.txt`
 - `results/final_demo_status.txt`
-
-These files provide lightweight evidence that the current route has been executed successfully.
-
----
-
-## Troubleshooting
-
-### Wrong Python interpreter
-
-```bash
-python -c "import sys; print(sys.executable)"
-```
-
-Make sure the intended environment is being used.
-
-### Missing demo subset files
-
-```bash
-ls data/raw_deepsea/demo_subset
-```
-
-If the demo subset files are missing, the demo route will not run.
-
-### Data loading fails
-
-Run:
-
-```bash
-python scripts/test_deepsea_demo_npz.py
-```
-
-before running model-related scripts.
-
-### Model forward fails
-
-Run:
-
-```bash
-python scripts/test_deepformer_forward.py
-```
-
-before trying training or evaluation.
-
-### Notebook variables are missing after restart
-
-If the notebook reports errors such as `PROJECT_ROOT is not defined`, restart the kernel and run again from the first cell.
 
 ---
 
