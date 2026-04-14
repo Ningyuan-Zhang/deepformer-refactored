@@ -19,11 +19,7 @@ At the current stage, it supports:
 - lightweight demo evaluation
 - a notebook-based demo workflow
 
-This repository is mainly intended to answer three practical questions:
 
-1. what files are needed,
-2. what should be run first,
-3. what outputs should be expected.
 
 ---
 
@@ -218,19 +214,6 @@ This notebook includes:
 9. validation
 10. checkpoint and log saving
 
-### Usage
-
-Open the notebook in VS Code or Jupyter and select the appropriate kernel.
-
-Recommended kernel:
-
-- `Python (deepformer_clean)`
-
-Important notes:
-
-- always run the notebook from the first cell;
-- if the kernel is restarted, run all earlier cells again;
-- if the environment changes, restart the kernel before re-running.
 
 ---
 
@@ -290,62 +273,6 @@ These files provide lightweight evidence that the current route has been execute
 
 ---
 
-## Troubleshooting
-
-### Wrong Python interpreter
-
-```bash
-python -c "import sys; print(sys.executable)"
-```
-
-Make sure the intended environment is being used.
-
-### Missing demo subset files
-
-```bash
-ls data/raw_deepsea/demo_subset
-```
-
-If the demo subset files are missing, the demo route will not run.
-
-### Data loading fails
-
-Run:
-
-```bash
-python scripts/test_deepsea_demo_npz.py
-```
-
-before running model-related scripts.
-
-### Model forward fails
-
-Run:
-
-```bash
-python scripts/test_deepformer_forward.py
-```
-
-before trying training or evaluation.
-
-### Notebook variables are missing after restart
-
-If the notebook reports errors such as `PROJECT_ROOT is not defined`, restart the kernel and run again from the first cell.
-
----
-
-## Current scope
-
-The repository already provides a runnable engineering route, but several parts are still unfinished:
-
-- the MAT route is not yet fully unified with the original YAML runtime path;
-- the current training/evaluation flow is demo-scale rather than benchmark-scale;
-- peak-vs-coverage comparison has not yet been added;
-- interpretability scripts and final outputs have not yet been completed.
-
-So this repository should currently be understood as a **runnable engineering version**, not a full paper-level reproduction.
-
----
 
 ## Additional documentation
 
