@@ -1,30 +1,30 @@
 # DeepFormer Refactored
 
-A refactored and runnable DeepFormer repository with a reconstructed public MAT-based data route for demo loading, forward testing, tiny training, lightweight evaluation, and notebook-based GPU demonstration.
+A practical and runnable DeepFormer repository with a reconstructed MAT-based data route for data loading, forward testing, tiny training, lightweight evaluation, and notebook-based demonstration.
 
 ---
 
 ## Overview
 
-This repository is organized as a practical runnable version of DeepFormer.
+This repository reorganizes the original DeepFormer project into a cleaner engineering structure and provides a **MAT-based runnable route** for quick validation and demonstration.
 
-At the current stage, it already supports:
+At the current stage, the repository supports:
 
-- reconstructed public `train.mat / valid.mat / test.mat`
-- MAT file inspection and structure verification
+- reconstructed `train.mat / valid.mat / test.mat`
+- MAT structure inspection
 - demo subset loading from `.npz`
 - DeepFormer model instantiation
 - forward-pass validation
 - tiny demo training
 - lightweight demo evaluation
-- a notebook-based GPU demo workflow
+- a notebook-based demo workflow
 
-The goal of this repository is simple: let a reader quickly see
+This repository is intended to help new users quickly answer four questions:
 
-1. which environment to use,
-2. which data files are needed,
-3. which scripts should be run first,
-4. what output files should be produced.
+1. What files are required?
+2. Which environment should be used?
+3. Which scripts should be run first?
+4. What outputs should be generated after each step?
 
 ---
 
@@ -48,26 +48,41 @@ deepformer-refactored/
 
 ---
 
-## Recommended environment
+## Prerequisites
 
-For the current script-based demo route, use:
+### 1. Clone the repository
 
 ```bash
-source /mnt/public5/genomebench/miniconda3/etc/profile.d/conda.sh
-conda activate /mnt/public5/genomebench/miniconda3/envs/deepformer_clean
+git clone <your-repo-url>
+cd deepformer-refactored
 ```
 
-Before running any script, it is recommended to confirm the Python path:
+### 2. Prepare a Python environment
+
+A conda environment is recommended.
 
 ```bash
-python -c "import sys; print(sys.executable)"
+conda create -n deepformer_clean python=3.9 -y
+conda activate deepformer_clean
+pip install -r requirements.txt
+```
+
+If your local setup uses another environment name, that is also fine. The important point is that the environment must be able to import the required packages and run the scripts in `scripts/`.
+
+### 3. Optional notebook support
+
+If you want to run the notebook demo, install notebook-related packages:
+
+```bash
+pip install ipykernel notebook jupyterlab
+python -m ipykernel install --user --name deepformer_clean --display-name "Python (deepformer_clean)"
 ```
 
 ---
 
 ## Required data files
 
-The current runnable route assumes that the following files already exist on the server.
+The current runnable route assumes that the following files are available under `data/raw_deepsea/`.
 
 ### Full MAT files
 - `data/raw_deepsea/train.mat`
@@ -79,8 +94,10 @@ The current runnable route assumes that the following files already exist on the
 - `data/raw_deepsea/demo_subset/valid_demo_256.npz`
 - `data/raw_deepsea/demo_subset/test_demo_256.npz`
 
-The MAT files are the reconstructed large-scale data artifacts.  
-The demo subset files are small extracted files used for quick testing and demonstration.
+The full MAT files are the reconstructed large-scale data artifacts.  
+The demo subset files are smaller extracted files used for quick testing and demonstration.
+
+If these files are not included in your clone, place them in the paths above before running the scripts.
 
 ---
 
@@ -89,11 +106,6 @@ The demo subset files are small extracted files used for quick testing and demon
 If you only want to verify that the current repository is runnable, execute the following commands in order:
 
 ```bash
-cd /mnt/public5/genomebench/ningyuan/projects/deepformer-refactored
-
-source /mnt/public5/genomebench/miniconda3/etc/profile.d/conda.sh
-conda activate /mnt/public5/genomebench/miniconda3/envs/deepformer_clean
-
 python scripts/test_deepsea_demo_npz.py
 python scripts/test_deepformer_forward.py
 python scripts/run_deepformer_demo_train.py
@@ -106,17 +118,18 @@ This is the shortest practical execution route in the current repository.
 
 ## Script-based running procedure
 
-### Step 1. Enter the project root
+### Step 1. Confirm the project root
+
+Run:
 
 ```bash
-cd /mnt/public5/genomebench/ningyuan/projects/deepformer-refactored
 pwd
 ```
 
-Expected output:
+You should be inside the repository root directory:
 
 ```text
-/mnt/public5/genomebench/ningyuan/projects/deepformer-refactored
+deepformer-refactored/
 ```
 
 ---
@@ -124,8 +137,7 @@ Expected output:
 ### Step 2. Activate the environment
 
 ```bash
-source /mnt/public5/genomebench/miniconda3/etc/profile.d/conda.sh
-conda activate /mnt/public5/genomebench/miniconda3/envs/deepformer_clean
+conda activate deepformer_clean
 ```
 
 Optional check:
@@ -133,6 +145,8 @@ Optional check:
 ```bash
 python -c "import sys; print(sys.executable)"
 ```
+
+This helps confirm that the expected interpreter is being used.
 
 ---
 
@@ -159,7 +173,7 @@ If this step fails, later model steps should not be run yet.
 python scripts/inspect_deepformer_signature.py
 ```
 
-This script is used to confirm how the current DeepFormer model is instantiated.
+This script is used to confirm how the current DeepFormer model should be instantiated.
 
 For the current demo route, the expected constructor arguments are:
 
@@ -190,7 +204,7 @@ If this step passes, the data-to-model connection is working.
 python scripts/run_deepformer_demo_train.py
 ```
 
-This is a small demonstration training script, not a full benchmark training run.
+This is a small demonstration training script, not a full benchmark-scale training run.
 
 It is used to verify:
 
@@ -222,9 +236,9 @@ Typical output files include:
 
 ---
 
-## Notebook-based GPU demo
+## Notebook-based demo
 
-In addition to the script-based route, the repository also contains a notebook-based GPU demo:
+In addition to the script-based route, the repository also contains a notebook-based demo:
 
 - `notebooks/deepformer_gpu_demo_notebook.ipynb`
 
@@ -232,32 +246,36 @@ This notebook is intended for step-by-step demonstration of the current workflow
 
 The notebook includes:
 
-1. entering the project root,
-2. importing dependencies,
-3. checking GPU availability,
-4. loading the demo subset,
-5. constructing the DataLoader,
-6. constructing DeepFormer,
-7. running a forward test,
-8. running tiny training,
-9. running validation,
-10. saving checkpoint and logs.
+1. project root setup,
+2. dependency import,
+3. device checking,
+4. demo subset loading,
+5. DataLoader construction,
+6. DeepFormer construction,
+7. forward-pass testing,
+8. tiny training,
+9. validation,
+10. checkpoint and log saving.
 
 ### How to use the notebook
 
 Open the notebook in VS Code or Jupyter and select the appropriate kernel.
 
+Recommended kernel:
+
+- `Python (deepformer_clean)`
+
 Important notes:
 
-- always run the notebook from the first cell,
-- if the kernel is restarted, run all earlier cells again,
+- always run the notebook from the first cell;
+- if the kernel is restarted, run all earlier cells again;
 - if the environment changes, restart the kernel before re-running.
 
 ---
 
 ## Current MAT route
 
-The current runnable route in this repository is a MAT-based route.
+The current runnable route in this repository is a **MAT-based route**.
 
 This means:
 
@@ -268,7 +286,7 @@ This means:
 5. the loader output was connected to DeepFormer,
 6. forward / train / evaluation scripts were built on top of this route.
 
-The current main route is therefore not yet the original YAML-based FASTA/BED/TXT runtime path, but a practical MAT-based execution route.
+The current main route is therefore **not yet the original YAML-based FASTA/BED/TXT runtime path**, but a practical MAT-based execution route.
 
 ---
 
@@ -290,7 +308,7 @@ From the reconstructed MAT files:
 
 This means:
 
-- each input sample is a one-hot encoded DNA sequence of length 1000,
+- each input sample is a one-hot encoded DNA sequence of length 1000;
 - each label is a 919-dimensional target vector.
 
 A more detailed summary is stored in:
@@ -303,12 +321,12 @@ A more detailed summary is stored in:
 
 For a first-time user of this repository, the recommended order is:
 
-1. read this `README.md`,
-2. verify the environment,
-3. run `test_deepsea_demo_npz.py`,
-4. run `test_deepformer_forward.py`,
-5. run `run_deepformer_demo_train.py`,
-6. run `run_deepformer_demo_eval.py`,
+1. read this `README.md`;
+2. verify the environment;
+3. run `scripts/test_deepsea_demo_npz.py`;
+4. run `scripts/test_deepformer_forward.py`;
+5. run `scripts/run_deepformer_demo_train.py`;
+6. run `scripts/run_deepformer_demo_eval.py`;
 7. inspect the files in `results/`.
 
 This order is simpler and more practical than reading all documents first.
@@ -325,7 +343,7 @@ Check:
 python -c "import sys; print(sys.executable)"
 ```
 
-Make sure the environment path is the intended one.
+Make sure the environment is the intended one.
 
 ---
 
@@ -337,11 +355,7 @@ Check:
 pwd
 ```
 
-Make sure you are inside:
-
-```text
-/mnt/public5/genomebench/ningyuan/projects/deepformer-refactored
-```
+Make sure you are inside the repository root before running scripts.
 
 ---
 
@@ -387,7 +401,7 @@ If the notebook reports errors such as `PROJECT_ROOT is not defined`, it usually
 
 In this case:
 
-- restart the kernel,
+- restart the kernel;
 - run the notebook again from the first cell.
 
 ---
@@ -402,7 +416,7 @@ The most important result files currently include:
 - `results/deepformer_demo_eval_log.txt`
 - `results/final_demo_status.txt`
 
-These files are intended to provide lightweight evidence that the current route has been executed successfully.
+These files provide lightweight evidence that the current route has been executed successfully.
 
 ---
 
@@ -410,12 +424,12 @@ These files are intended to provide lightweight evidence that the current route 
 
 The repository already provides a runnable engineering route, but several things are still not finished:
 
-- the MAT route is not yet fully unified with the original YAML runtime path,
-- the current training/evaluation flow is demo-scale rather than benchmark-scale,
-- peak-vs-coverage comparison has not yet been added,
+- the MAT route is not yet fully unified with the original YAML runtime path;
+- the current training/evaluation flow is demo-scale rather than benchmark-scale;
+- peak-vs-coverage comparison has not yet been added;
 - interpretability scripts and final outputs have not yet been completed.
 
-Therefore, this repository should currently be understood as a runnable engineering version, not a full paper-level reproduction.
+Therefore, this repository should currently be understood as a **runnable engineering version**, not a full paper-level reproduction.
 
 ---
 
