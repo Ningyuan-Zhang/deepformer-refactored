@@ -3,7 +3,7 @@
 A practical and runnable DeepFormer repository with a reconstructed MAT-based route for data loading, forward testing, tiny training, lightweight evaluation, and notebook-based demonstration.
 
 <p align="center">
-  <img src="assets/deepformer_figure.png" alt="DeepFormer related figure" width="88%">
+  <img src="assets/deepformer_figure.jpeg" alt="DeepFormer related figure" width="88%">
 </p>
 
 ---
