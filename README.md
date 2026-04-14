@@ -2,17 +2,26 @@
 
 A practical and runnable DeepFormer repository with a reconstructed MAT-based route for data loading, forward testing, tiny training, lightweight evaluation, and notebook-based demonstration.
 
+---
+
+## Method overview
+
+DeepFormer is a DNA-sequence function prediction model proposed for identifying the functional properties of genomic sequences.  
+The method combines convolutional feature extraction with attention-based sequence modeling, so that both local sequence patterns and higher-level sequence interactions can be captured within a unified framework.
+
+In this repository, DeepFormer is used as the core model, while the surrounding workflow is reorganized into a clearer and more practical engineering structure.
+
 <p align="center">
-  <img src="assets/deepformer_figure.jpeg" alt="DeepFormer related figure" width="88%">
+  <img src="assets/deepformer_figure.jpeg" alt="DeepFormer method-related figure" width="88%">
 </p>
 
 ---
 
-## Overview
+## This repository
 
-This repository reorganizes the DeepFormer project into a clearer engineering structure and provides a practical MAT-based runnable route.
+This repository mainly focuses on making the current DeepFormer workflow easier to understand, run, and extend.
 
-At the current stage, the repository supports:
+At the current stage, it includes:
 
 - reconstructed `train.mat / valid.mat / test.mat`
 - MAT structure inspection
@@ -23,24 +32,7 @@ At the current stage, the repository supports:
 - lightweight demo evaluation
 - notebook-based demonstration
 
-The main purpose of this repository is to make the current workflow easier to understand, run, and extend.
-
----
-
-## Method
-
-DeepFormer is a DNA-sequence function prediction method based on convolutional feature extraction and attention-based sequence modeling.
-
-In the current repository, the model is used together with a reconstructed MAT-based data route. The overall executable workflow is:
-
-1. reconstruct public data into MAT files
-2. inspect MAT structure
-3. extract small demo subsets
-4. connect demo subsets to a PyTorch-compatible loader
-5. instantiate DeepFormer
-6. run forward testing, tiny training, and lightweight evaluation
-
-This repository therefore focuses on **engineering organization and executable workflow construction**, rather than full benchmark-scale reproduction.
+The current main executable route is a **MAT-based route**, which is suitable for practical loading, testing, and demonstration.
 
 ---
 
@@ -121,7 +113,6 @@ python scripts/run_deepformer_demo_eval.py
 ```
 
 This is the shortest practical execution route in the current repository.
-
 ---
 
 ## Running procedure
@@ -357,6 +348,6 @@ If more detailed notes are needed, refer to:
 
 ## Citation
 
-Yao Z, Zhang W, Song P, Hu Y, Liu J.  
-*DeepFormer: a hybrid network based on convolutional neural network and flow-attention mechanism for identifying the function of DNA sequences.*  
-*Briefings in Bioinformatics*, 2023, 24(2): bbad095.
+If you use `DeepFormer` in your work, please cite:
+
+> Yao Z, Zhang W, Song P, Hu Y, Liu J. DeepFormer: a hybrid network based on convolutional neural network and flow-attention mechanism for identifying the function of DNA sequences. Briefings in Bioinformatics. 2023;24(2):bbad095. doi: https://doi.org/10.1093/bib/bbad095
