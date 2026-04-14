@@ -8,15 +8,7 @@ A practical and runnable DeepFormer repository with a reconstructed MAT-based ro
 
 This repository is based on the **original DeepFormer method**, and mainly focuses on project restructuring, public-data reconstruction, and runnable demo workflow construction.
 
-```mermaid
-flowchart LR
-    A[Input DNA sequence<br/>one-hot encoded] --> B[CNN blocks<br/>local motif / local pattern extraction]
-    B --> C[Flow-Attention module<br/>long-range feature interaction]
-    C --> D[Fully connected layers]
-    D --> E[Multi-label output<br/>919 targets]
-```
 
-The figure above is a simplified schematic summary for README presentation. It is not the original figure from the paper, but a repository-level overview based on the original DeepFormer method description.
 
 ---
 
